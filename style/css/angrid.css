@@ -1,0 +1,370 @@
+.ellipsis {
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.anGrid {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  margin: 5px;
+  /*anGrid list style, just like table*/
+
+  /*anGrid large thumb style, just like windows files icon*/
+
+}
+.anGrid.th-list {
+  /*structure*/
+
+  /*header cell style*/
+
+  /*row with selecting row checkbox*/
+
+  /*row color*/
+
+}
+.anGrid.th-list ul {
+  margin: 0;
+}
+.anGrid.th-list ul > li {
+  /*row (tr)*/
+
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+  list-style: none;
+  /*you may change here*/
+
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid #D4D4D4;
+  /*row status*/
+
+}
+.anGrid.th-list ul > li:nth-child(even) {
+  background-color: #F2F2F2;
+}
+.anGrid.th-list ul > li.hover,
+.anGrid.th-list ul > li.focus {
+  background-color: #FFFFCC;
+}
+.anGrid.th-list ul > li.selected {
+  background-color: #4F81BD;
+  color: #fff;
+}
+.anGrid.th-list ul > li ol {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  right: 0px;
+  bottom: 0px;
+  margin: 0px;
+  /*cell (td)*/
+
+}
+.anGrid.th-list ul > li ol li {
+  position: absolute;
+  line-height: 30px;
+  height: 30px;
+  list-style: none;
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.anGrid.th-list .anHead {
+  font-weight: bold;
+  overflow: hidden;
+  height: 31px;
+}
+.anGrid.th-list .anHead .caretdown,
+.anGrid.th-list .anHead .caretup {
+  margin-top: 13px;
+  margin-left: 2px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  content: "";
+}
+.anGrid.th-list .anHead .caretdown {
+  border-top: 4px solid #000000;
+}
+.anGrid.th-list .anHead .caretup {
+  border-bottom: 4px solid #000000;
+}
+.anGrid.th-list .anHead .sortable {
+  cursor: pointer;
+}
+.anGrid.th-list .anBody {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.anGrid.th-list .anFooter {
+  overflow: hidden;
+}
+.anGrid.th-list .anCheckbox {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 25px;
+}
+.anGrid.th-list .anCheckbox + ol {
+  left: 25px;
+}
+.anGrid.th-list .anCheckbox span {
+  position: absolute;
+  top: 7px;
+  left: 5px;
+  cursor: pointer;
+}
+.anGrid.th-list .odd {
+  background-color: #F2F2F2;
+}
+.anGrid.th-list .even {
+  background-color: #FFF;
+}
+.anGrid.th-list .selectable {
+  cursor: pointer;
+}
+.anGrid.th-large ul,
+.anGrid.th ul {
+  margin: 0;
+}
+.anGrid.th-large ul > li,
+.anGrid.th ul > li {
+  /*thumb*/
+
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+  list-style: none;
+  float: left;
+  /*you may change here*/
+
+  border-radius: 5px;
+  border-bottom: 1px solid #D4D4D4;
+  /*status style*/
+
+  background-color: #E2EFDB;
+  color: #3C782E;
+  /*row with selecting row checkbox*/
+
+}
+.anGrid.th-large ul > li.hover,
+.anGrid.th ul > li.hover,
+.anGrid.th-large ul > li.focus,
+.anGrid.th ul > li.focus {
+  background-color: #3c782e;
+  color: #fff;
+}
+.anGrid.th-large ul > li.selected,
+.anGrid.th ul > li.selected {
+  background-color: #3c782e;
+  color: #fff;
+}
+.anGrid.th-large ul > li.normal,
+.anGrid.th ul > li.normal {
+  background-color: #E2EFDB;
+  color: #3C782E;
+}
+.anGrid.th-large ul > li.normal.hover,
+.anGrid.th ul > li.normal.hover {
+  background-color: #3c782e;
+  color: #fff;
+}
+.anGrid.th-large ul > li.danger,
+.anGrid.th ul > li.danger {
+  background-color: #a53736;
+  color: #fff;
+}
+.anGrid.th-large ul > li.danger.hover,
+.anGrid.th ul > li.danger.hover {
+  background-color: #f0dfdf;
+  color: #fff;
+}
+.anGrid.th-large ul > li.warning,
+.anGrid.th ul > li.warning {
+  background-color: #fcf8e6;
+  color: #fff;
+}
+.anGrid.th-large ul > li.warning.hover,
+.anGrid.th ul > li.warning.hover {
+  background-color: #b08836;
+  color: #fff;
+}
+.anGrid.th-large ul > li ol,
+.anGrid.th ul > li ol {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  right: 0px;
+  bottom: 0px;
+  margin: 0px;
+  /*cell (td)*/
+
+}
+.anGrid.th-large ul > li ol li,
+.anGrid.th ul > li ol li {
+  position: absolute;
+  line-height: 30px;
+  height: 30px;
+  list-style: none;
+  white-space: nowrap;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.anGrid.th-large ul > li .anCheckbox,
+.anGrid.th ul > li .anCheckbox {
+  display: none;
+}
+.anGrid.th-large .anHead,
+.anGrid.th .anHead {
+  display: none;
+}
+.anGrid.th-large .anBody,
+.anGrid.th .anBody {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.anGrid.th-large .anFooter,
+.anGrid.th .anFooter {
+  display: none;
+}
+.anGrid.th-large ul > li {
+  width: 100px;
+  height: 100px;
+  margin: 0 10px 10px 0;
+}
+.anGrid.th ul > li {
+  width: 30px;
+  height: 30px;
+  margin: 0 10px 10px 0;
+}
+/*for sepcial gird*/
+.instance.th-list .col0 {
+  background-color: #fff;
+  left: 0px;
+  right: 0px;
+}
+.instance.th-list .col1 {
+  left: 0px;
+  width: 8.75%;
+}
+.instance.th-list .col2 {
+  left: 8.75%;
+  width: 8.75%;
+}
+.instance.th-list .col3 {
+  left: 17.5%;
+  width: 8.75%;
+}
+.instance.th-list .col4 {
+  left: 26.5%;
+  width: 5%;
+}
+.instance.th-list .col5 {
+  left: 31.5%;
+  width: 5%;
+}
+.instance.th-list .col6 {
+  left: 36.5%;
+  width: 20%;
+}
+.instance.th-list .col7 {
+  left: 56.5%;
+  width: 8.75%;
+}
+.instance.th-list .col8 {
+  left: 65.25%;
+  width: 8.75%;
+}
+.instance.th-list .col9 {
+  left: 74%;
+  width: 8.75%;
+}
+.instance.th-list .col10 {
+  left: 82.75%;
+  width: 8.75%;
+}
+.instance.th-list .col11 {
+  left: 91.5%;
+  width: 8.75%;
+}
+.instance.th-large .col1 {
+  top: 30px;
+  left: 0px;
+  width: 100%;
+}
+.instance.th-large .col2 {
+  display: none;
+}
+.instance.th-large .col3 {
+  display: none;
+}
+.instance.th-large .col4 {
+  display: none;
+}
+.instance.th-large .col5 {
+  display: none;
+}
+.instance.th-large .col6 {
+  display: none;
+}
+.instance.th-large .col7 {
+  display: none;
+}
+.instance.th-large .col8 {
+  display: none;
+}
+.instance.th-large .col9 {
+  display: none;
+}
+.instance.th-large .col10 {
+  display: none;
+}
+.instance.th-large .col11 {
+  display: none;
+}
+.instance.th .col1 {
+  display: none;
+}
+.instance.th .col2 {
+  display: none;
+}
+.instance.th .col3 {
+  display: none;
+}
+.instance.th .col4 {
+  display: none;
+}
+.instance.th .col5 {
+  display: none;
+}
+.instance.th .col6 {
+  display: none;
+}
+.instance.th .col7 {
+  display: none;
+}
+.instance.th .col8 {
+  display: none;
+}
+.instance.th .col9 {
+  display: none;
+}
+.instance.th .col10 {
+  display: none;
+}
+.instance.th .col11 {
+  display: none;
+}

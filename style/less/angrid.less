@@ -1,0 +1,132 @@
+.ellipsis {
+    white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.anGrid {
+    height: 100%; width: 100%; overflow: hidden;  margin:5px;
+    /*anGrid list style, just like table*/
+    &.th-list {
+        ul {
+        	margin: 0;                                             
+            > li {
+            	
+                /*row (tr)*/
+                position: relative; text-align: center; overflow: hidden; list-style: none;                
+                /*you may change here*/
+                width: 100%; height: 30px; border-bottom: 1px solid #D4D4D4;
+                /*row status*/
+                &:nth-child(even) { background-color:#F2F2F2; }
+                &.hover, &.focus { background-color: #FFFFCC; }
+                &.selected { background-color: #4F81BD; color: #fff; }                
+                ol { position: absolute; top: 0px; left:0; right: 0px; bottom: 0px;  margin: 0px; 
+                  /*cell (td)*/
+                  li { position: absolute; line-height:30px; height: 30px; list-style: none; .ellipsis; } 
+                } 
+            }                     
+        }
+        /*structure*/
+        .anHead { font-weight: bold; overflow: hidden; height: 31px;
+        	.caretdown, 
+        	.caretup { margin-top: 13px; margin-left: 2px; display: inline-block; width: 0; height: 0; vertical-align: top; border-left: 4px solid transparent; border-right: 4px solid transparent;  opacity: 0.3; filter: alpha(opacity=30); content: ""; }
+        	.caretdown { border-top: 4px solid #000000; }
+        	.caretup { border-bottom: 4px solid #000000; }
+        	.sortable { cursor: pointer; }
+         }
+        .anBody { overflow-y: auto; overflow-x: hidden; }
+        .anFooter { overflow: hidden; }
+        /*header cell style*/
+        
+        /*row with selecting row checkbox*/
+        .anCheckbox { position: absolute; top:0px; left:0px; width:25px; }
+        .anCheckbox + ol { left: 25px; }
+        .anCheckbox span { position: absolute; top: 7px; left: 5px; cursor: pointer; }
+        /*row color*/
+        .odd { background-color:#F2F2F2; }
+        .even {background-color:#FFF; }
+        .selectable { cursor: pointer; }
+    }
+    /*anGrid large thumb style, just like windows files icon*/
+    &.th-large, &.th {
+        ul {
+        	margin: 0;                                             
+            > li {
+                /*thumb*/
+                position: relative; text-align: center; overflow: hidden; list-style: none; float: left;
+                /*you may change here*/
+                border-radius: 5px;  border-bottom: 1px solid #D4D4D4; 
+                
+                /*status style*/
+                background-color: #E2EFDB; color: #3C782E;
+                &.hover, 
+                &.focus { background-color: #3c782e; color: #fff; }
+                &.selected { background-color: #3c782e; color: #fff; }
+                &.normal { background-color: #E2EFDB; color: #3C782E; }
+                &.normal.hover { background-color: #3c782e; color: #fff; } 
+                &.danger { background-color: #a53736; color: #fff; }
+                &.danger.hover { background-color: #f0dfdf; color: #fff; }
+                &.warning { background-color: #fcf8e6; color: #fff; }
+                &.warning.hover { background-color: #b08836; color: #fff; }
+                
+                ol { position: absolute; top: 0px; left:0; right: 0px; bottom: 0px;  margin: 0px; 
+                  /*cell (td)*/
+                  li { position: absolute; line-height:30px; height: 30px; list-style: none; .ellipsis; } 
+                } 
+                 /*row with selecting row checkbox*/
+                .anCheckbox { display: none; }
+            }                     
+        }
+        .anHead { display: none; }
+        .anBody { overflow-y: auto; overflow-x: hidden; }
+        .anFooter { display:none; }
+    }
+    &.th-large ul > li { width: 100px; height: 100px; margin: 0 10px 10px 0; }
+    &.th ul > li { width: 30px; height: 30px; margin: 0 10px 10px 0; }
+}
+
+/*for sepcial gird*/
+.instance{
+    &.th-list {
+    	.col0 { background-color: #fff; left:0px; right:0px; }
+        .col1 { left:0px; width:8.75%; }
+        .col2 { left:8.75%; width:8.75%; }
+        .col3 { left:17.5%; width:8.75%; }
+        .col4 { left:26.5%; width:5%; }
+        .col5 { left:31.5%; width:5%; }
+        .col6 { left:36.5%; width:20%; }
+        .col7 { left:56.5%; width:8.75%; }
+        .col8 { left:65.25%; width:8.75%; }
+        .col9 { left:74%; width:8.75%; }
+        .col10 { left:82.75%; width:8.75%; }
+        .col11 { left:91.5%; width:8.75%; }
+    }
+    &.th-large {
+        .col1 { top:30px; left:0px; width:100%; }
+        .col2 { display: none; }
+        .col3 { display: none; }
+        .col4 { display: none; }
+        .col5 { display: none; }
+        .col6 { display: none; }
+        .col7 { display: none; }
+        .col8 { display: none; }
+        .col9 { display: none; }
+        .col10 { display: none; }
+        .col11 { display: none; }
+    }
+    &.th {
+        .col1 { display: none; }
+        .col2 { display: none; }
+        .col3 { display: none; }
+        .col4 { display: none; }
+        .col5 { display: none; }
+        .col6 { display: none; }
+        .col7 { display: none; }
+        .col8 { display: none; }
+        .col9 { display: none; }
+        .col10 { display: none; }
+        .col11 { display: none; }
+    }
+}

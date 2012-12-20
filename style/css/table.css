@@ -1,0 +1,71 @@
+.relative {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.relative-top {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  overflow: hidden;
+}
+.relative-bottom {
+  position: absolute;
+  top: 35px;
+  left: 0px;
+  bottom: 2px;
+  right: 0px;
+  overflow: hidden;
+}
+.relative-bottom > #monitor_grid,
+.relative-bottom > #grid {
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+.table-form {
+  height: 100%;
+  width: 100%;
+}
+.table-form td {
+  vertical-align: top;
+  text-align: right;
+  padding-bottom: 10px;
+}
+.table-form td + td {
+  text-align: left;
+  padding-left: 10px;
+}
+.table-form .form-inline * {
+  margin-right: 10px;
+}
+.table-form label {
+  margin-bottom: 0px;
+  margin-top: 5px;
+}
+.actions {
+  height: 35px;
+}
+.actions > .btn-group {
+  display: inline-block;
+  margin: 5px 2px;
+}
+.filter {
+  position: relative;
+  width: 170px;
+  height: 28px;
+}
+.filter .icon-search {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+}
+.filter input {
+  position: absolute;
+  text-indent: 22px;
+  width: 160px;
+}
