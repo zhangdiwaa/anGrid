@@ -116,6 +116,27 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 			// ]
    		// }
    		//demo2
+   		// $scope.angridOptions = {
+    		// angridStyle:			     "th-list",
+    		// multiSelectRows:             false,
+			// data:                        $scope.myData, //数据输入
+	        // SelectedRows:                $scope.mySelections, //返回选中对象
+		    // columns: 					 //用一个对象数组定义每一列
+		    // [ 
+				// { field: 'name', displayName:'虚拟机名称', width:'8.75%', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
+                // ,{ field: 'private_ip', displayName:'内网IP', width:'8.75%'}
+                // ,{ field: 'flavor_name', displayName:'配置信息', width:'8.75%'}
+                // ,{ field: 'billing_type', displayName:'计费类型', width:'5%'}
+                // ,{ field: 'status', displayName:'状态', width:'5%', columnFilter: 'instance_status'}
+                // ,{ field: 'ssh_desp', displayName:'公网SSH域名', width:'20%'}
+                // ,{ field: 'floating_ips', displayName:'公网ip', width:'8.75%'}
+                // ,{ field: 'key', displayName:'秘钥', width:'8.75%'}
+                // ,{ field: 'security_group', displayName:'安全组', width:'8.75%'}
+                // ,{ field: 'image', displayName:'镜像', width:'8.75%'}
+                // ,{ field: 'snap', displayName:'快照', width:'auto'}
+			// ]
+   		// }
+   		//demo3
    		$scope.angridOptions = {
     		angridStyle:			     "th-list",
     		multiSelectRows:             false,
@@ -123,17 +144,17 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 	        SelectedRows:                $scope.mySelections, //返回选中对象
 		    columns: 					 //用一个对象数组定义每一列
 		    [ 
-				{ field: 'name', displayName:'虚拟机名称', width:'8.75%', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
-                ,{ field: 'private_ip', displayName:'内网IP', width:'8.75%'}
-                ,{ field: 'flavor_name', displayName:'配置信息', width:'8.75%'}
-                ,{ field: 'billing_type', displayName:'计费类型', width:'5%'}
-                ,{ field: 'status', displayName:'状态', width:'5%', columnFilter: 'instance_status'}
-                ,{ field: 'ssh_desp', displayName:'公网SSH域名', width:'20%'}
-                ,{ field: 'floating_ips', displayName:'公网ip', width:'8.75%'}
-                ,{ field: 'key', displayName:'秘钥', width:'8.75%'}
-                ,{ field: 'security_group', displayName:'安全组', width:'8.75%'}
-                ,{ field: 'image', displayName:'镜像', width:'8.75%'}
-                ,{ field: 'snap', displayName:'快照', width:'auto'}
+				{ field: 'name', displayName:'虚拟机名称', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
+                ,{ field: 'private_ip', displayName:'内网IP'}
+                ,{ field: 'flavor_name', displayName:'配置信息'}
+                ,{ field: 'billing_type', displayName:'计费类型'}
+                ,{ field: 'status', displayName:'状态', width:'auto', columnFilter: 'instance_status'}
+                ,{ field: 'ssh_desp', displayName:'公网SSH域名'}
+                ,{ field: 'floating_ips', displayName:'公网ip'}
+                ,{ field: 'key', displayName:'秘钥', width:'auto'}
+                ,{ field: 'security_group', displayName:'安全组'}
+                ,{ field: 'image', displayName:'镜像'}
+                ,{ field: 'snap', displayName:'快照'}
 			]
    		}
     	

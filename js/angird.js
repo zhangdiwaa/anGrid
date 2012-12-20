@@ -1,8 +1,7 @@
 //services
 angular.module('anGrid.services', [])
-//templete factory, return default templete
-	.factory('templete', function() {
-		//TODO: angrid templete 
+	.factory('widthServices', function(){
+		
 	})
 	
 //TODO:we need filter function for date and chinese character
@@ -44,11 +43,43 @@ angular.module('anGrid.directives', [], function($compileProvider){
 				//console.log($attr);
 		    },
 		    controller: function($scope, $element, $attrs, $transclude ) {
-		    	console.log($attrs);
+		    	var root = this;
+		    	//TODO: packaging computer the width
 		    	var left = 0;
+		    	var oldutil = '';
+		    	this.widthFuc = function (col, i){
+					//I suppose to use cssClass to set width when you need different angridStyle,
+					//to use width when you only need a default list
+					var t = parseFloat(col.width);
+					if(isNaN(t)){
+						//if there is no cssClass or no width, we will set average width for each column
+						if(col.cssClass == ''){
+							if(col.width == '' || col.width == 'auto'){
+								var res = 100 - left;
+								var average = (oldutil == "%") ?
+									res/($scope.option.columns.length - i) :
+									100/$scope.option.columns.length;
+								col._style = 'left: '+ left + '%' +'; width:' + average + '%';
+								left += average;
+							}else{
+								throw "you would better use percentage (\"10%\",\"20%\", etc...) to use remaining width of grid";
+							}
+						}
+					}else{
+						//if we set width as cssClass = '20%' or '20px', '20em', 20, etc... 
+						var util = col.width.substr(t.toString().length);
+						util = (util == '') ? 'px' : util;
+						oldutil = (i == 0) ? util : oldutil;
+						if(util != oldutil){
+							throw "you must set the same util of width, you would better use percentage (\"10%\",\"20%\", etc...)";
+						}
+						col._style = 'left: '+ left + util +'; width: '+ col.width;
+						left += t;
+					}
+				}
+				
 		    	//default columns
 				angular.forEach($scope.option.columns, function(col, i){
-					
 				    col = angular.extend({
 			        	field:                   '',         //data name
 			        	displayName:             this.field, //displayname, the title of the columns
@@ -61,25 +92,8 @@ angular.module('anGrid.directives', [], function($compileProvider){
 			        	_style:                  ''
 					}, col);
 					
+					root.widthFuc(col, i);
 					
-					//TODO: packaging computer the width
-					if(col.width != ''){
-						var t = parseFloat(col.width);
-						//TODO: maybe util is em or cm, what should we do?
-						if(isNaN(t)){
-							if(col.width == 'auto'){
-								var res = 100 - left;
-								col._style = 'left: '+ left + "%" +'; width:' + res + "%";
-								left += res;
-							}else{
-								throw "you would better use percentage (\"10%\",\"20%\", etc...) to use remaining width of grid";
-							}
-						}else{
-							var util = (col.width.indexOf("%", col.width.length - 1) !== -1) ? "%" : "px";
-							col._style = 'left: '+ left + util +'; width: '+ col.width;
-							left += t;
-						}
-					}
 					$scope.option.columns.splice(i, 1, col);
 				});
 		    	// default config object, config is a global object of angrid
@@ -98,8 +112,7 @@ angular.module('anGrid.directives', [], function($compileProvider){
 				
 				//bind 
 				$scope.option = this.config;
-				
-				
+				console.log(this.config);
 		    },
 		    template:
 		    	//TODO: to complie templete
