@@ -1,111 +1,44 @@
-//services
-angular.module('anGrid.services', [])
-	.factory('widthServices', function(){
-		
-	})
-	
-//TODO:we need filter function for date and chinese character
-angular.module('anGrid.filters', [])
-//most of filters are custom filter, you should define them yourself and inject them into angrid
-//in angrid we only support a little easy filter
-    //'checkmark', return character of right or wrong 
-	.filter('checkmark', function () {
-	    return function (input) {
-	        return input ? '\u2714' : '\u2718';
-	    };
-	})
-	//'reverse', reverse the string
-	.filter('reverse', function() {
-	    return function(input, uppercase) {
-	      var out = "";
-	      for (var i = 0; i < input.length; i++) {
-	        out = input.charAt(i) + out;
-	      }
-	      // conditional based on optional argument
-	      if (uppercase) {
-	        out = out.toUpperCase();
-	      }
-	      return out;
-	    }
-	 })
-
 //directive
-angular.module('anGrid.directives', [], function($compileProvider){
+angular.module('anGrid.directives', ['anGrid.services'], function($compileProvider){
 	//directive angrid
-	$compileProvider.directive('angrid', function($compile) {
+	$compileProvider.directive('angrid', function($compile, widthServices) {
 		var angrid = {
 		    //A transclude linking function pre-bound to the correct transclusion scope:
 		    transclude: true,
 		    scope: {
 		    	option: "=angrid"
 		    },
-		    link: function($scope, $element, $attr) {
-				//console.log($attr);
-		    },
 		    controller: function($scope, $element, $attrs, $transclude ) {
 		    	var root = this;
-		    	//TODO: packaging computer the width
-		    	var left = 0;
-		    	var oldutil = '';
-		    	this.widthFuc = function (col, i){
-					//I suppose to use cssClass to set width when you need different angridStyle,
-					//to use width when you only need a default list
-					var t = parseFloat(col.width);
-					if(isNaN(t)){
-						//if there is no cssClass or no width, we will set average width for each column
-						if(col.cssClass == ''){
-							if(col.width == '' || col.width == 'auto'){
-								var res = 100 - left;
-								var average = (oldutil == "%") ?
-									res/($scope.option.columns.length - i) :
-									100/$scope.option.columns.length;
-								col._style = 'left: '+ left + '%' +'; width:' + average + '%';
-								left += average;
-							}else{
-								throw "you would better use percentage (\"10%\",\"20%\", etc...) to use remaining width of grid";
-							}
-						}
-					}else{
-						//if we set width as cssClass = '20%' or '20px', '20em', 20, etc... 
-						var util = col.width.substr(t.toString().length);
-						util = (util == '') ? 'px' : util;
-						oldutil = (i == 0) ? util : oldutil;
-						if(util != oldutil){
-							throw "you must set the same util of width, you would better use percentage (\"10%\",\"20%\", etc...)";
-						}
-						col._style = 'left: '+ left + util +'; width: '+ col.width;
-						left += t;
-					}
-				}
-				
-		    	//default columns
-				angular.forEach($scope.option.columns, function(col, i){
+				angular.forEach($scope.option.columnDefs, function(col, i){
 				    col = angular.extend({
 			        	field:                   '',         //data name
-			        	displayName:             this.field, //displayname, the title of the columns
+			        	displayName:             this.field, //displayname, the title of the columnDefs
 			        	cssClass:                '',         //the css of column, defined the width, left ( postion: absolute )
 			        	width:                   '',         //the substitutes of cssClass, defined the width from 0% to 100%
 			        	sortable:                true,       //column sortable or not
-			        	columnFilter:            '',         //costom column filter for a column
-			        	columnTemplete:          false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
+			        	cellFilter:              '',         //costom column filter for a column
+			        	cellTemplate:            false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
 			        	_sortIconflag:           false,      //the flag that decide display the sortIcon or not, you should not set
 			        	_style:                  ''
 					}, col);
 					
-					root.widthFuc(col, i);
-					
-					$scope.option.columns.splice(i, 1, col);
+					$scope.option.columnDefs.splice(i, 1, col);
 				});
+				
+				widthServices($scope.option.columnDefs);
+				
 		    	// default config object, config is a global object of angrid
 		        this.config = angular.extend({
 		        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
-		        	displayCheckbox:             true,      //TODO: this attr has not been used
 			        canSelectRows:               true,      //the flag that decide user can select rows or not
-			        multiSelectRows:             true,      //the flag that decide user can select multiple rows or not
-			        selectWithCheckboxOnly:      false,     //TODO: this attr has not been used
-			        columns:                     [],        //this is just reminding that option has to have an attr named columns
-			        columnSortable:              true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
-			        SelectedRows:                [],        //return the data of select rows
+			        multiSelect:                 true,      //the flag that decide user can select multiple rows or not
+			        displaySelectionCheckbox:    true,      //the flag that decide checkbox of each line display or not
+			        selectWithCheckboxOnly:      false,     //the flag that decide user can only select rows by click checkbox or not
+			        multiSelectWithCheckbox:     false,     //the flag that decide user can only multi-select rows by click checkbox or not
+			        columnDefs:                  [],        //this is just reminding that option has to have an attr named columnDefs
+			        enableSorting:               true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
+			        selectedItems:               [],        //return the data of select rows
 			        _orderByPredicate:           "",        //the orderby field name
 			        _orderByreverse:             false      //the orderby reverse flag
 				}, $scope.option);
@@ -144,16 +77,11 @@ angular.module('anGrid.directives', [], function($compileProvider){
 		    },
 		    template:
 	        //TODO: to complie templete
-	          '<li ng-click="anrow.toggleSelectedFuc($event)" ng-class="anrow.rowCssClassFuc()" ng-mouseenter="anrow.hovered=true" ng-mouseleave="anrow.hovered=false" >' +
-				  '<div class="anCheckbox"><span ng-class="anrow.checkboxClassFuc()"></span></div>' +
-				  '<ol  class="clearfix">' +
-				      '<ancell ng-repeat="col in anrowColumns" row-data="anrowData" col-data="col"></ancell>' + 
-				  '</ol>' +												
-			  '</li>',
-	       replace: true,
+	          '<li ng-click="anrow.toggleSelectedFuc($event)" ng-class="anrow.rowCssClassFuc()" ng-mouseenter="anrow.hovered=true" ng-mouseleave="anrow.hovered=false" ></li>',
+	        replace: true,
 
-	       link: function($scope, $element, $attrs, $angridCtrl){
-	        	$scope.anrowColumns = $angridCtrl.config.columns;
+	        link: function($scope, $element, $attrs, $angridCtrl){
+	        	$scope.anrowColumns = $angridCtrl.config.columnDefs;
 			    // default option object
 				$scope.anrow = angular.extend({				
 					hovered: false,
@@ -170,53 +98,70 @@ angular.module('anGrid.directives', [], function($compileProvider){
 							return;
 						return $scope.anrowData.selected ? "dijitCheckBox dijitCheckBoxChecked" : "dijitCheckBox";
 					},
-					//return selected rows' data to $angridCtrl.config.SelectedRows
+					//multiSelect
+					multiSelectFuc: function(){
+						if ($scope.anrowData.selected){
+							$scope.anrowData.selected = false;
+						    var oldselectedItems = $angridCtrl.config.selectedItems;
+						    $angridCtrl.config.selectedItems = [];
+					    	angular.forEach(oldselectedItems, function(row){
+						    	if(row.selected) $angridCtrl.config.selectedItems.push(row);
+						    });	
+						}else{
+							$scope.anrowData.selected = true;
+							$angridCtrl.config.selectedItems.push($scope.anrowData);
+						}
+					},
+					//SingleSelect
+					singleSelectFuc: function(){
+					    if ($scope.anrowData.selected){
+					    	$scope.anrowData.selected = false;
+					    	$angridCtrl.config.selectedItems = [];
+					    }else{
+					    	angular.forEach($angridCtrl.config.data, function(rowdata){
+						    	rowdata.selected = false;
+						    });
+					    	$scope.anrowData.selected = true;
+					    	$angridCtrl.config.selectedItems = [];
+					    	$angridCtrl.config.selectedItems.push($scope.anrowData);
+					    		
+					    }
+					},
+					//return selected rows' data to $angridCtrl.config.selectedItems
+					
 					toggleSelectedFuc: function($event){
 						//TODO : maybe we need a selectionService just like ng-grid 1779
 				 		if (!$angridCtrl.config.canSelectRows) {
 				            return;
 				        }
-				        var element = event.target || event;
-				        //check and make sure its not the bubbling up of our checked 'click' event 
-				        if (element.type == "checkbox" && element.parentElement.className == "anCheckbox") {
-				            return;
-				        } 
-				        if ($angridCtrl.config.selectWithCheckboxOnly && element.type != "checkbox"){
-				            return;
-				        }
 				        if(typeof($scope.anrowData.selected) == undefined){
 				        	return;
 				        }
-						if($angridCtrl.config.multiSelectRows){
-						    //multiSelect
-						    if ($scope.anrowData.selected){
-								$scope.anrowData.selected = false;
-							    var oldSelectedRows = $angridCtrl.config.SelectedRows;
-							    $angridCtrl.config.SelectedRows = [];
-						    	angular.forEach(oldSelectedRows, function(row){
-							    	if(row.selected) $angridCtrl.config.SelectedRows.push(row);
-							    });	
-							}else{
-								$scope.anrowData.selected = true;
-								$angridCtrl.config.SelectedRows.push($scope.anrowData);
-							}
+				        //we use the attribute named dir to justify user clicked checkbox or not in a row
+				        if($angridCtrl.config.selectWithCheckboxOnly && $event.srcElement.dir != "checkbox"){
+				        	return;
+				        }
+						if($angridCtrl.config.multiSelect){
+						    if($angridCtrl.config.multiSelectWithCheckbox == true && $event.srcElement.dir != "checkbox" ){
+						    	this.singleSelectFuc();
+	                        }else{
+	                        	this.multiSelectFuc();
+	                        }
 						}else{
-						    //SingleSelection
-						    if ($scope.anrowData.selected){
-						    	$scope.anrowData.selected = false;
-						    	$angridCtrl.config.SelectedRows = [];
-						    }else{
-						    	angular.forEach($angridCtrl.config.data, function(rowdata){
-							    	rowdata.selected = false;
-							    });
-						    	$scope.anrowData.selected = true;
-						    	$angridCtrl.config.SelectedRows = [];
-						    	$angridCtrl.config.SelectedRows.push($scope.anrowData);
-						    		
-						    }
+						    this.singleSelectFuc();
 						}	
 					}
 				}, $scope.anrow);
+				
+				//set the realy row templete
+	        	var checkbox = $angridCtrl.config.displaySelectionCheckbox == true ? 
+	        	               '<div class="anCheckbox"><span dir="checkbox" ng-class="anrow.checkboxClassFuc()"></span></div>' :
+	        	               '';
+	        	var row = checkbox + 
+	        			  '<ol  class="clearfix">' +
+						      '<ancell ng-repeat="col in anrowColumns" row-data="anrowData" col-data="col"></ancell>' + 
+						  '</ol>';	
+				$element.append($compile(row)($scope)); 
 	        }
 	    };
 	});
@@ -235,10 +180,10 @@ angular.module('anGrid.directives', [], function($compileProvider){
 		    // compile: function () {
                 // return {
                     // post: function ($scope, $element, $attr) {
-                  	    // var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
+                  	    // var filter = $scope.colData.cellFilter == '' ? '' : ' | ' + $scope.colData.cellFilter;
 						// var templete = 
-							// $scope.colData.columnTemplete ? 
-							// $scope.colData.columnTemplete : 
+							// $scope.colData.cellTemplate ? 
+							// $scope.colData.cellTemplate : 
 							// '<span ng-bind-html="rowData[colData.field] '+ filter +'"></span>';
 		          	    // //Angular's jQuery lite provides the following methods:
 		          	    // $element.append($compile(templete)($scope));
@@ -246,10 +191,10 @@ angular.module('anGrid.directives', [], function($compileProvider){
                 // };
             // } 
 	        link: function($scope, $element, $attrs, $angridCtrl) {
-	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
+	        	var filter = $scope.colData.cellFilter == '' ? '' : ' | ' + $scope.colData.cellFilter;
 				var templete = 
-					$scope.colData.columnTemplete ? 
-					$scope.colData.columnTemplete : 
+					$scope.colData.cellTemplate ? 
+					$scope.colData.cellTemplate : 
 					'<span ng-bind-html="rowData[colData.field] '+ filter +'"></span>';
           	    //Angular's jQuery lite provides the following methods:
           	    $element.append($compile(templete)($scope));
@@ -262,6 +207,8 @@ angular.module('anGrid.directives', [], function($compileProvider){
 		    require: '^angrid',
 		    restrict: 'E',
 		    transclude: true,
+		    template: '<li></li>',
+	        replace: true,
 		    scope: {
 		    	sortfield: "=sortField",
 		    	sortreverse: "=sortReverse"
@@ -269,17 +216,17 @@ angular.module('anGrid.directives', [], function($compileProvider){
 	        link: function($scope, $element, $attrs, $angridCtrl) {
 	        	$scope.anhead = angular.extend({
 	        		selectAll: false,
-	        		columns: $angridCtrl.config.columns,
+	        		columnDefs: $angridCtrl.config.columnDefs,
 	        		toggleSelectAllFuc: function(){
-		        		if(!$angridCtrl.config.canSelectRows || !$angridCtrl.config.displayCheckbox ){
+		        		if(!$angridCtrl.config.canSelectRows || !$angridCtrl.config.displaySelectionCheckbox ){
 		        			return;
 		        		}
-		        		$angridCtrl.config.SelectedRows = [];
+		        		$angridCtrl.config.selectedItems = [];
 		        		if(!this.selectAll){
 		        			this.selectAll = true;
 		        			angular.forEach($angridCtrl.config.data, function(row){
 			        			row.selected = true;
-						    	$angridCtrl.config.SelectedRows.push(row);
+						    	$angridCtrl.config.selectedItems.push(row);
 						    });
 		        		}else{
 		        			this.selectAll = false;
@@ -293,7 +240,7 @@ angular.module('anGrid.directives', [], function($compileProvider){
 		        			return;
 		        		}
 		        		
-		        		angular.forEach(this.columns, function(c){
+		        		angular.forEach(this.columnDefs, function(c){
 		        			c._sortIconflag = false;
 		        		});
 		        		col._sortIconflag = true;
@@ -302,18 +249,85 @@ angular.module('anGrid.directives', [], function($compileProvider){
 		        		$scope.caret = $scope.sortreverse ? 'caretdown' : 'caretup';
 		        	}
 	        	}, $scope.anhead);
-	        },    
-	        template:
-	        //TODO: to complie templete
-			'<li>' +
-				'<div class="anCheckbox" ng-click="anhead.toggleSelectAllFuc()"><span class="dijitCheckBox" ng-class="{\'dijitCheckBoxChecked\': anhead.selectAll}"></span></div>' +
-				'<ol>' +
-					'<li ng-repeat="col in anhead.columns" class="{{col.cssClass}}  ng-class="{\'sortable\': col.sortable}" style="{{col._style}}" ng-click="anhead.sortFuc(col)">{{col.displayName}}<span ng-class="caret" ng-show="col._sortIconflag"></span></li>' +
-				'</ol>' +												
-			'</li>',
-	        replace: true
+	        	
+	        	//set the realy head row templete
+	        	var checkbox = $angridCtrl.config.displaySelectionCheckbox == true ? 
+	        	               '<div class="anCheckbox" ng-click="anhead.toggleSelectAllFuc()"><span class="dijitCheckBox" ng-class="{\'dijitCheckBoxChecked\': anhead.selectAll}"></span></div>' :
+	        	               '';
+	        	var row = checkbox + 
+	        			  '<ol>' +
+							  '<li ng-repeat="col in anhead.columnDefs" class="{{col.cssClass}}  ng-class="{\'sortable\': col.sortable}" style="{{col._style}}" ng-click="anhead.sortFuc(col)">{{col.displayName}}<span ng-class="caret" ng-show="col._sortIconflag"></span></li>' +
+						  '</ol>';
+				$element.append($compile(row)($scope)); 
+	        }
 	    };
 	});
 })
 
+
+//services
+angular.module('anGrid.services', [])
+	.factory('widthServices', function(){
+		return function(columnDefs){
+			var left = 0;
+			var oldutil = '';
+			angular.forEach(columnDefs, function(col, i){
+				//only use width without cssClass will not show currect th & th-large style of anGrid
+			    //I suppose to use cssClass to set width when you need different angridStyle,
+				//so I wish you use width when you only need an simple default list
+				var t = parseFloat(col.width);
+				if(isNaN(t)){
+					//if there is no cssClass or no width, we will set average width for each column
+					if(col.cssClass == ''){
+						if(col.width == '' || col.width == 'auto'){
+							var res = 100 - left;
+							var average = (oldutil == "%") ?
+								res/(columnDefs.length - i) :
+								100/columnDefs.length;
+							col._style = 'left: '+ left + '%' +'; width:' + average + '%';
+							left += average;
+						}else{
+							throw "you would better use percentage (\"10%\",\"20%\", etc...) to use remaining width of grid";
+						}
+					}
+				}else{
+					//if we set width as cssClass = '20%' or '20px', '20em', 20, etc... 
+					var util = col.width.substr(t.toString().length);
+					util = (util == '') ? 'px' : util;
+					oldutil = (i == 0) ? util : oldutil;
+					if(util != oldutil){
+						throw "you must set the same util of width, you would better use percentage (\"10%\",\"20%\", etc...)";
+					}
+					col._style = 'left: '+ left + util +'; width: '+ col.width;
+					left += t;
+				}
+			});
+		}	
+	})
+	
+//TODO:we need filter function for date and chinese character
+angular.module('anGrid.filters', [])
+//most of filters are custom filter, you should define them yourself and inject them into angrid
+//in angrid we only support a little easy filter
+    //'checkmark', return character of right or wrong 
+	.filter('checkmark', function () {
+	    return function (input) {
+	        return input ? '\u2714' : '\u2718';
+	    };
+	})
+	//'reverse', reverse the string
+	.filter('reverse', function() {
+	    return function(input, uppercase) {
+	      var out = "";
+	      for (var i = 0; i < input.length; i++) {
+	        out = input.charAt(i) + out;
+	      }
+	      // conditional based on optional argument
+	      if (uppercase) {
+	        out = out.toUpperCase();
+	      }
+	      return out;
+	    }
+	 })
+	 
 angular.module('anGrid', ['anGrid.services', 'anGrid.directives', 'anGrid.filters']);
