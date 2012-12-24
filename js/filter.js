@@ -1,4 +1,4 @@
-angular.module('commonFilter', ['ngSanitize'])
+angular.module('commonFilter', [])
 	//'reverse', reverse the string
 	.filter('instance_status', function() {
 	    return function(input) {

@@ -1,5 +1,5 @@
 //directive
-angular.module('anGrid.directives', ['anGrid.services'], function($compileProvider){
+angular.module('anGrid.directives', ['anGrid.services', 'ngSanitize'], function($compileProvider){
 	//directive angrid
 	$compileProvider.directive('angrid', function($compile, widthServices) {
 		var angrid = {
