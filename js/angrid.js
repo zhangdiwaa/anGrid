@@ -17,7 +17,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'ngSanitize'], function(
 			        	cssClass:                '',         //the css of column, defined the width, left ( postion: absolute )
 			        	width:                   '',         //the substitutes of cssClass, defined the width from 0% to 100%
 			        	sortable:                true,       //column sortable or not
-			        	cellFilter:              '',         //costom column filter for a column
+			        	columnFilter:            '',         //costom column filter for a column
 			        	cellTemplate:            false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
 			        	_sortIconflag:           false,      //the flag that decide display the sortIcon or not, you should not set
 			        	_style:                  ''
@@ -180,7 +180,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'ngSanitize'], function(
 		    // compile: function () {
                 // return {
                     // post: function ($scope, $element, $attr) {
-                  	    // var filter = $scope.colData.cellFilter == '' ? '' : ' | ' + $scope.colData.cellFilter;
+                  	    // var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 						// var templete = 
 							// $scope.colData.cellTemplate ? 
 							// $scope.colData.cellTemplate : 
@@ -191,11 +191,12 @@ angular.module('anGrid.directives', ['anGrid.services', 'ngSanitize'], function(
                 // };
             // } 
 	        link: function($scope, $element, $attrs, $angridCtrl) {
-	        	var filter = $scope.colData.cellFilter == '' ? '' : ' | ' + $scope.colData.cellFilter;
+	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 				var templete = 
 					$scope.colData.cellTemplate ? 
 					$scope.colData.cellTemplate : 
-					'<span ng-bind-html="rowData[colData.field] '+ filter +'"></span>';
+					//ng-bind-html can only accept string argument
+					'<span ng-bind-html="rowData[colData.field].toString() '+ filter +'"></span>';
           	    //Angular's jQuery lite provides the following methods:
           	    $element.append($compile(templete)($scope));
 	        }   
