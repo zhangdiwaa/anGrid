@@ -91,7 +91,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     		angridStyle:			     "th-list",
     		multiSelectRows:             true, //多选
     		multiSelectWithCheckbox:     true, //只能用多选框多选
-			data:                        $scope.myData, //数据输入
+			data:                        'myData', //数据输入
 	        selectedItems:                $scope.mySelections, //返回选中对象
 		    columnDefs: 					 //用一个对象数组定义每一列
 		    [ 
@@ -111,6 +111,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     	
     	//we must watch attribute in a $scope.object, then the bothway binding will be establish
     	$scope.$watch("angridOptions.selectedItems", function(newValue, oldValue){
+    		console.log(newValue);
     		$scope.mySelections = $scope.angridOptions.selectedItems;
 		})		
 	});

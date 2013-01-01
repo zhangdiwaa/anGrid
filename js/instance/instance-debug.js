@@ -51,19 +51,6 @@ angular.module('instanceApp.services', ['ngResource'])
 	      		 security_group: "sg1",
 	      		 image: "centOS 64", 
 	      		 snap: 3
-      		},
-      		{
-      			 name: "BLACK",
-	      		 private_ip: "10.0.0.4",
-	      		 flavor_name: "m1.large",
-	      		 billing_type: "包月",
-	      		 status: "shutdown",
-	      		 ssh_desp: "sjdksdjls.sina.sws.com:121001",   
-	      		 floating_ips: "124.114.110.16", 
-	      		 key: "my sk3",
-	      		 security_group: "sg1",
-	      		 image: "ubuntu 64", 
-	      		 snap: 4
       		}
       	]
       }
@@ -91,13 +78,13 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     .controller('instanceApp.controller', function ($scope, instancesData) {
 	    $scope.mySelections = [];
 	    $scope.myData = [];
-    	$scope.myData = instancesData.query();
     	
     	//demo1
     	$scope.angridOptions = {
+    		angridStyle:                 "th",
     		multiSelect:                 false,  //设置为单选
-			data:                        $scope.myData, //数据输入
-	        selectedItems:                $scope.mySelections, //返回选中对象
+			data:                        "myData", //数据输入
+	        selectedItems:               $scope.mySelections, //返回选中对象
 		    columnDefs: 					 //用一个对象数组定义每一列
 		    [ 
 				{ field: 'name', displayName:'虚拟机名称', cssClass:'col1', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
@@ -112,7 +99,44 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
                 ,{ field: 'image', displayName:'镜像', cssClass:'col10'}
                 ,{ field: 'snap', displayName:'快照', cssClass:'col11'}
 			]
-   		}    	
+   		}
+   		
+   		$scope.resetData = function(){
+   			$scope.myData = [];
+   			console.log($scope.myData);
+   		}
+   		$scope.queryData = function(){
+   			$scope.myData = instancesData.query();
+   			console.log($scope.myData);
+   		}
+   		$scope.setTimeData = function(){
+   			var time = 2000;
+   			setTimeout(function () {
+				$scope.myData = [{
+					      			 name: "time",
+						      		 private_ip: "10.0.0.3",
+						      		 flavor_name: "m1.tiny",
+						      		 billing_type: "计时",
+						      		 status: "danger",
+						      		 ssh_desp: "sjdksdjls.sina.sws.com:121001",   
+						      		 floating_ips: "124.114.110.16", 
+						      		 key: "my sk3",
+						      		 security_group: "sg1",
+						      		 image: "centOS 64", 
+						      		 snap: 3
+				      			}];
+			   console.log($scope.myData, time);
+			   //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
+			   $scope.$digest();
+			}, time)
+   		}
+   		
+   		$scope.test = 'wa';
+   		setTimeout(function () {
+			   $scope.test = "shit";
+			   //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
+			   $scope.$digest();
+			}, 2000)
     	//we must watch attribute in a $scope.object, then the bothway binding will be establish
     	// $scope.$watch("angridOptions.selectedItems", function(newValue, oldValue){
     		// $scope.mySelections = $scope.angridOptions.selectedItems;

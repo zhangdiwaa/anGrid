@@ -92,7 +92,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     		// angridStyle:			     "th-list",
     		// multiSelectRows:             false, //多选
     		// selectWithCheckboxOnly:      true, //只有点击多选框才能选择行
-			// data:                        $scope.myData, //数据输入
+			// data:                        'myData', //数据输入
 	        // selectedItems:                $scope.mySelections, //返回选中对象
 		    // columnDefs: 					 //用一个对象数组定义每一列
 		    // [ 
@@ -115,7 +115,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     		angridStyle:			     "th-list",
     		multiSelectRows:             false, //多选
     		displaySelectionCheckbox:    false, //不显示多选框
-			data:                        $scope.myData, //数据输入
+			data:                        'myData', //数据输入
 	        selectedItems:                $scope.mySelections, //返回选中对象
 		    columnDefs: 					 //用一个对象数组定义每一列
 		    [ 
