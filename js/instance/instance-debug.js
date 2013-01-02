@@ -130,10 +130,10 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 			   $scope.$digest();
 			}, time)
    		}
-   		
-   		$scope.test = 'wa';
+   		$scope.test = {};
+   		$scope.test = $scope.angridOptions;
    		setTimeout(function () {
-			   $scope.test = "shit";
+			   $scope.test.angridStyle = "shit";
 			   //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
 			   $scope.$digest();
 			}, 2000)
