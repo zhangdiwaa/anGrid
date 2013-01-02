@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+
+<!--
+	this is a default demo of anGrid
+-->
+
+<html>
+<head>
+	<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- lib -->	
+	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+	<script SRC="lib/jquery-1.8.3.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.js"></script>
+	<script src="lib/angular-1.0.3/angular.js"></script>
+	<script src="lib/angular-1.0.3/angular-resource.js"></script>
+	<script src="lib/angular-1.0.3/angular-sanitize.js"></script><!-- HTML Parser -->
+	<!--[if lt IE 8]>
+	<script src="lib/json2.js"></script>
+	<![endif]-->
+	<!-- mine -->
+	<link rel="stylesheet" href="style/css/reset.css"><!-- my supplement of bootstrap -->
+	<link rel="stylesheet" href="style/css/angrid.css"><!-- the css of angrid plugin  -->
+	<link rel="stylesheet" href="style/css/table.css"><!-- the css of page  -->
+	
+	<script src="js/angrid.js"></script><!-- my grid plugin -->
+	<script src="js/filter.js"></script><!-- custom common filter -->
+	<script>
+		function MainCtrl($scope) {
+		 $scope.timeOfDay = 'morning';
+		 $scope.name = 'Nikki';
+		}
+		 
+		function ChildCtrl($scope) {
+		 $scope.name = 'Mattie';
+		}
+		 
+		function BabyCtrl($scope) {
+		 $scope.timeOfDay = 'evening';
+		 $scope.name = 'Gingerbreak Baby';
+		}
+	</script>
+</head>
+
+
+<body ng-app ng-controller="MainCtrl">
+ <p>Good {{timeOfDay}}, {{name}}!</p>
+ <div ng-controller="ChildCtrl">
+   <p>Good {{timeOfDay}}, {{name}}!</p>
+   <p ng-controller="BabyCtrl">Good {{timeOfDay}}, {{name}}!</p>
+ </div>
+ 
+ <code>
+		function MainCtrl($scope) {
+		 $scope.timeOfDay = 'morning';
+		 $scope.name = 'Nikki';
+		}
+ </code>
+ <br>
+ <code>		 
+		function ChildCtrl($scope) {
+		 $scope.name = 'Mattie';
+		}
+ </code>
+ <br>
+ <code>			 
+		function BabyCtrl($scope) {
+		 $scope.timeOfDay = 'evening';
+		 $scope.name = 'Gingerbreak Baby';
+		}
+ </code>
+</body>
+
+</html>

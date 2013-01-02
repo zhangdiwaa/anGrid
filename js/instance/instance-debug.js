@@ -132,15 +132,10 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
    		}
    		$scope.test = {};
    		$scope.test = $scope.angridOptions;
-   		setTimeout(function () {
-			   $scope.test.angridStyle = "shit";
-			   //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
-			   $scope.$digest();
-			}, 2000)
     	//we must watch attribute in a $scope.object, then the bothway binding will be establish
-    	// $scope.$watch("angridOptions.selectedItems", function(newValue, oldValue){
-    		// $scope.mySelections = $scope.angridOptions.selectedItems;
-		// })		
+    	$scope.$watch("angridOptions.selectedItems", function(newValue, oldValue){
+    		$scope.mySelections = $scope.angridOptions.selectedItems;
+		})
 	});
 
 //entrance of this program

@@ -5,58 +5,66 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		var angrid = {
 		    //A transclude linking function pre-bound to the correct transclusion scope:
 		    transclude: true,
+		    //scope must be true so that we can use $scope.$eval('string')
 		    scope: true,
 		    controller: function($scope, $element, $attrs, $transclude ) {
 		    	var root = this;
-		    	
-                $scope.option = $scope.$eval($attrs.angrid);
-        
-                angular.forEach($scope.option.columnDefs, function(col, i){
-				    col = angular.extend({
-			        	field:                   '',         //data name
-			        	displayName:             this.field, //displayname, the title of the columnDefs
-			        	cssClass:                '',         //the css of column, defined the width, left ( postion: absolute )
-			        	width:                   '',         //the substitutes of cssClass, defined the width from 0% to 100%
-			        	sortable:                true,       //column sortable or not
-			        	columnFilter:            '',         //costom column filter for a column
-			        	cellTemplate:            false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
-			        	_sortIconflag:           false,      //the flag that decide display the sortIcon or not, you should not set
-			        	_style:                  ''
-					}, col);
-					
-					$scope.option.columnDefs.splice(i, 1, col);
-				});
-				
-				widthServices($scope.option.columnDefs);
-				
-		    	// default config object, config is a global object of angrid
-		        root.config = angular.extend({
-		        	data:                        [],
-		        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
-			        canSelectRows:               true,      //the flag that decide user can select rows or not
-			        multiSelect:                 true,      //the flag that decide user can select multiple rows or not
-			        displaySelectionCheckbox:    true,      //the flag that decide checkbox of each line display or not
-			        selectWithCheckboxOnly:      false,     //the flag that decide user can only select rows by click checkbox or not
-			        multiSelectWithCheckbox:     false,     //the flag that decide user can only multi-select rows by click checkbox or not
-			        columnDefs:                  [],        //this is just reminding that option has to have an attr named columnDefs
-			        enableSorting:               true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
-			        selectedItems:               [],        //return the data of select rows
-			        _orderByPredicate:           "",        //the orderby field name
-			        _orderByreverse:             false      //the orderby reverse flag
-				}, $scope.option);
-				
-				//bind 
-				$scope.option = root.config;
-		    	
-                // To study the ng-grid 
+		    	// To study the ng-grid 
                 var options = $scope.$eval($attrs.angrid);
+                
+                var init = function(){
+                	angular.forEach(options.columnDefs, function(col, i){
+					    col = angular.extend({
+				        	field:                   '',         //data name
+				        	displayName:             this.field, //displayname, the title of the columnDefs
+				        	cssClass:                '',         //the css of column, defined the width, left ( postion: absolute )
+				        	width:                   '',         //the substitutes of cssClass, defined the width from 0% to 100%
+				        	sortable:                true,       //column sortable or not
+				        	columnFilter:            '',         //costom column filter for a column
+				        	cellTemplate:            false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
+				        	_sortIconflag:           false,      //the flag that decide display the sortIcon or not, you should not set
+				        	_style:                  ''
+						}, col);
+						
+						options.columnDefs.splice(i, 1, col);
+					});
+					
+					widthServices(options.columnDefs);
+					
+			    	// default config object, config is a global object of angrid
+			        root.config = angular.extend({
+			        	data:                        [],
+			        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
+				        canSelectRows:               true,      //the flag that decide user can select rows or not
+				        multiSelect:                 true,      //the flag that decide user can select multiple rows or not
+				        displaySelectionCheckbox:    true,      //the flag that decide checkbox of each line display or not
+				        selectWithCheckboxOnly:      false,     //the flag that decide user can only select rows by click checkbox or not
+				        multiSelectWithCheckbox:     false,     //the flag that decide user can only multi-select rows by click checkbox or not
+				        columnDefs:                  [],        //this is just reminding that option has to have an attr named columnDefs
+				        enableSorting:               true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
+				        selectedItems:               [],        //return the data of select rows
+				        _orderByPredicate:           "",        //the orderby field name
+				        _orderByreverse:             false      //the orderby reverse flag
+					}, options);
+					
+					$scope.option = root.config;
+					console.log( $scope.option )
+                }
+                init();
+				//bind 
+				$scope.$parent.$watch(options.angridStyle, function(a) {
+                    console.log(options.angridStyle)
+                    $scope.option.angridStyle = options.angridStyle;
+                });
+				
+				//watch the data change
                 var prevlength = 0;
                 var dataWatcher = function (a) {
                 	if (typeof options.data == "string") {
+                		init();
 	                    prevlength = a ? a.length:0;
 	                    $scope.option.data = $scope.$eval(options.data) || [];
-	                    $scope.option = root.config;
-	                    console.log(a);
+	                    //console.log(options)
 	                }
                 };
                 // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
@@ -80,7 +88,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 							'<anrow ng-repeat="rowdata in option.data | orderBy:option._orderByPredicate:option._orderByreverse" anrow-data="rowdata" ></anrow>' + 
 						'</ul>' +
 					'</div>' +
-					'<div class="footer"></div>' +
+					'<div class="footer">{{test}}{{option.angridStyle}}</div>' +
 				'</div>',
 		    replace: true
 	    };
