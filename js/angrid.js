@@ -17,11 +17,32 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				this.config = setDefaultOption($scope.option);
 				widthServices($scope.option.columnDefs);
 				
-				$scope.selectedItems = root.config.selectedItems;
-				$scope.$watch(root.config.selectedItems, function(a) {
-                    $scope.option.selectedItems = root.config.selectedItems;
-                    console.log(root.config.selectedItems)
-                });
+				
+				$scope.$parent.mySelections = $scope.option.selectedItems;
+				console.log($scope.$parent.mySelections)
+				// $scope.selectedItems = root.config.selectedItems;
+				// $scope.$watch($scope.option.selectedItems, function(a) {
+                    // $scope.option.selectedItems = a;
+                    // $scope.$parent.angridOptions.selectedItems = $scope.option.selectedItems;
+                    // console.log($scope.option.selectedItems)
+                // });
+                
+                // var selectItemslength = 0;
+                // var selectItemsWatcher = function (a) {
+                	// if (typeof $scope.option.selectedItems == "string") {
+	                    // selectItemslength = a ? a.length:0;
+	                    // $scope.option.selectedItems = $scope.$eval($scope.option.selectedItems) || [];
+	                    // root.config.selectedItems = $scope.option.selectedItems;
+	                // }
+                // };
+                // // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
+                // $scope.$parent.$watch($scope.option.selectedItems, dataWatcher);
+                // $scope.$parent.$watch($scope.option.selectedItems + '.length', function(a) {
+                    // if (a != selectItemslength) {
+                        // dataWatcher($scope.$eval($scope.option.selectedItems));
+                    // }
+                // });
+                
 				//watch the data change, 
 				//To study the ng-grid 
                 var prevlength = 0;
@@ -40,7 +61,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                     }
                 });
                 
-                console.log("config:", this.config, "option:", $scope.option);
+                //console.log("config:", this.config, "option:", $scope.option);
 		    },
 		    template:
 		    	//TODO: to complie templete
@@ -153,7 +174,6 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						}else{
 						    this.singleSelectFuc();
 						}
-						console.log($scope.selectedItems)	
 					}
 				}, $scope.anrow);
 				
@@ -245,7 +265,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		        		}
 		        	},
 		        	sortFuc : function(col){
-		        		if(!$angridCtrl.config.columnSortable || !col.sortable ){
+		        		if(!$angridCtrl.config.enableSorting || !col.sortable ){
 		        			return;
 		        		}
 		        		
@@ -256,6 +276,11 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		        		$scope.sortfield = col.field;
 		        		$scope.sortreverse = !$scope.sortreverse;
 		        		$scope.caret = $scope.sortreverse ? 'caretdown' : 'caretup';
+		        	},
+		        	headCellCssFuc : function(col){
+		        		var cssClass = col.sortable == true ? "sortable " : " ";
+		        		cssClass += col.cssClass;
+		        		return cssClass;
 		        	}
 	        	}, $scope.anhead);
 	        	
@@ -265,7 +290,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	        	               '';
 	        	var row = checkbox + 
 	        			  '<ol>' +
-							  '<li ng-repeat="col in anhead.columnDefs" class="{{col.cssClass}}  ng-class="{\'sortable\': col.sortable}" style="{{col._style}}" ng-click="anhead.sortFuc(col)">{{col.displayName}}<span ng-class="caret" ng-show="col._sortIconflag"></span></li>' +
+							  '<li ng-repeat="col in anhead.columnDefs" ng-class="anhead.headCellCssFuc(col)"  ng-class="{\'sortable\': col.sortable}" style="{{col._style}}" ng-click="anhead.sortFuc(col)">{{col.displayName}}<span ng-class="caret" ng-show="col._sortIconflag"></span></li>' +
 						  '</ol>';
 				$element.append($compile(row)($scope)); 
 	        }

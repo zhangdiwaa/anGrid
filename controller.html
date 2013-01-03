@@ -30,46 +30,49 @@
 		function MainCtrl($scope) {
 		 $scope.timeOfDay = 'morning';
 		 $scope.name = 'Nikki';
+		 $scope.me = 'MainCtrl';
+		 $scope.array = [];
+		 $scope.alternative = $scope.$eval($scope.array);
+		 
+		 $scope.setname = function(){
+		 	$scope.name = "MainCtrl";
+		 	$scope.me = $scope.name;
+		 	$scope.array = [1,2,3];
+		 }
+		 
 		}
 		 
-		function ChildCtrl($scope) {
+		function ChildCtrl($scope){
+		 var parent = $scope.$parent;
+		 console.log(parent)
 		 $scope.name = 'Mattie';
+		 $scope.setname = function(){
+		 	$scope.name = "ChildCtrl";
+		 	parent.me = $scope.name;
+		 }
 		}
 		 
 		function BabyCtrl($scope) {
 		 $scope.timeOfDay = 'evening';
 		 $scope.name = 'Gingerbreak Baby';
+		 $scope.setname = function(){
+		 	$scope.name = "BabyCtrl";
+		 }
 		}
 	</script>
 </head>
 
 
 <body ng-app ng-controller="MainCtrl">
- <p>Good {{timeOfDay}}, {{name}}!</p>
+ <p>Good {{timeOfDay}}, {{name}}!&nbsp;<button ng-click="setname()">setname</button></p>
+ <P>me: {{me}}</P>
+ <P>array: {{array}}</P>
+ <P>alternative: {{alternative}}</P>
  <div ng-controller="ChildCtrl">
-   <p>Good {{timeOfDay}}, {{name}}!</p>
-   <p ng-controller="BabyCtrl">Good {{timeOfDay}}, {{name}}!</p>
+   <p>Good {{timeOfDay}}, {{name}}!&nbsp;<button ng-click="setname()">setname</button></p>
+   <p ng-controller="BabyCtrl" >Good {{timeOfDay}}, {{name}}!&nbsp;<button ng-click="setname()">setname</button></p>
  </div>
- 
- <code>
-		function MainCtrl($scope) {
-		 $scope.timeOfDay = 'morning';
-		 $scope.name = 'Nikki';
-		}
- </code>
- <br>
- <code>		 
-		function ChildCtrl($scope) {
-		 $scope.name = 'Mattie';
-		}
- </code>
- <br>
- <code>			 
-		function BabyCtrl($scope) {
-		 $scope.timeOfDay = 'evening';
-		 $scope.name = 'Gingerbreak Baby';
-		}
- </code>
+
 </body>
 
 </html>

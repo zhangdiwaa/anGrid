@@ -2,12 +2,8 @@
 
 
 <!--
-	this is a multi select and width fuction demo of anGrid  
-tips:          
-   only use width without cssClass will not show currect th & th-large style of anGrid
-   so I wish you use width when you only need an simple default list
+	this is a multiSelectOnlybyCheckbox demo of anGrid
 -->
-
 
 
 <head>
@@ -30,7 +26,8 @@ tips:
 	
 	<script src="js/angrid.js"></script><!-- my grid plugin -->
 	<script src="js/filter.js"></script><!-- custom common filter -->
-	<script src="js/instance/instance-multiSlelect-widthFuc.js"></script><!-- main ng-app module -->
+	<script src="js/resource.js"></script><!-- resource module -->
+	<script src="js/instance/multi-select-onlyby-checkbox.js"></script><!-- main ng-app module -->
 </head>
 
 <body>
@@ -63,7 +60,6 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 						<button class="btn {{(angridOptions.angridStyle != 'th-list') || 'active'}}"  ng-click="angridOptions.angridStyle='th-list'"><i class="icon-th-list"></i></button>
 						<button class="btn {{(angridOptions.angridStyle != 'th-large') || 'active'}}"  ng-click="angridOptions.angridStyle='th-large'"><i class="icon-th-large"></i></button>
 						<button class="btn {{(angridOptions.angridStyle != 'th') || 'active'}}"  ng-click="angridOptions.angridStyle='th'"><i class="icon-th"></i></button>
-						
 					</div>
 				</div>
 				<div class="actions pull-right">

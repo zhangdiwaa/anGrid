@@ -26,7 +26,8 @@
 	
 	<script src="js/angrid.js"></script><!-- my grid plugin -->
 	<script src="js/filter.js"></script><!-- custom common filter -->
-	<script src="js/instance/instance-debug.js"></script><!-- main ng-app module -->
+	<script src="js/resource.js"></script><!-- resource module -->
+	<script src="js/instance/update-grid-data.js"></script><!-- main ng-app module -->
 </head>
 
 <body>
@@ -43,7 +44,7 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 						<button class="btn btn-primary" ng-click="resetData()"><i class="icon-white icon-minus-sign"></i> 清空数据</button>
 					</div>
 					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="setTimeData()"><i class="icon-white icon-time"></i> 数据定时填充</button>
+						<button class="btn btn-primary" ng-click="setTimeData()"><i class="icon-white icon-time"></i> 数据{{setTime}}毫秒后填充</button>
 					</div>
 					<div class="btn-group">
 						<button class="btn {{(angridOptions.angridStyle != 'th-list') || 'active'}}"  ng-click="angridOptions.angridStyle='th-list'"><i class="icon-th-list"></i></button>
@@ -73,15 +74,21 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 	</div>
 	<div id="bottom">
 		<P>
-			instanceApp : 
+			mySelections : 
 			<!-- <button ng-click="mySelections=[]" >reset</button> -->
-			{{mySelections}}
+			{{mySelections }}
 		</P>
 		<p>
 			angridStyle: {{angridOptions.angridStyle}}
 		</p>
 		<p>
-			test: {{test.angridStyle}}
+			angridOptions.selectedItems: {{angridOptions.selectedItems}}
+		</p>
+		<p>
+			{{ wa = angridOptions.selectedItems }}
+		</p>
+		<p>
+			{{ wa }}
 		</p>
 	</div>
 </div> <!-- end of #instanceApp -->
