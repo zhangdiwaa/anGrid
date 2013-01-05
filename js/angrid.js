@@ -12,39 +12,31 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    	//there are there three local variables
 		    	//$scope.option  ------ as the children scope of the controller which has angrid
 		    	//$scope.theData ------ to update the grid data, we need to $scope.theData = $scope.$eval($scope.option.data)
-		    	//this.config ------- set default parameters of angrid, can not be read by parent controller
+		    	//this.config ------- set default parameters of angrid, this is this controller's object, can not be read by parent controller
                 $scope.option = $scope.$eval($attrs.angrid);
+                //set the default params of angrid
 				this.config = setDefaultOption($scope.option);
+				//set width
 				widthServices($scope.option.columnDefs);
+				//set the the default params to $scope.option
+				//I can not do this by just write "$scope.option = this.config"
+				$scope.option.angridStyle =                this.config.angridStyle;
+				$scope.option.canSelectRows =              this.config.canSelectRows;
+				$scope.option.multiSelect =                this.config.multiSelect;
+				$scope.option.displaySelectionCheckbox =   this.config.displaySelectionCheckbox;
+				$scope.option.selectWithCheckboxOnly =     this.config.selectWithCheckboxOnly;
+				$scope.option.multiSelectWithCheckbox =    this.config.multiSelectWithCheckbox;
+				$scope.option.columnDefs =                 this.config.columnDefs;
+				$scope.option.enableSorting =              this.config.enableSorting;
+				$scope.option.selectedItems =              this.config.selectedItems;
+				$scope.option._orderByPredicate =          this.config._orderByPredicate;
+				$scope.option._orderByreverse =            this.config._orderByreverse;
 				
-				
-				$scope.$parent.mySelections = $scope.option.selectedItems;
-				console.log($scope.$parent.mySelections)
-				// $scope.selectedItems = root.config.selectedItems;
-				// $scope.$watch($scope.option.selectedItems, function(a) {
-                    // $scope.option.selectedItems = a;
-                    // $scope.$parent.angridOptions.selectedItems = $scope.option.selectedItems;
-                    // console.log($scope.option.selectedItems)
-                // });
-                
-                // var selectItemslength = 0;
-                // var selectItemsWatcher = function (a) {
-                	// if (typeof $scope.option.selectedItems == "string") {
-	                    // selectItemslength = a ? a.length:0;
-	                    // $scope.option.selectedItems = $scope.$eval($scope.option.selectedItems) || [];
-	                    // root.config.selectedItems = $scope.option.selectedItems;
-	                // }
-                // };
-                // // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
-                // $scope.$parent.$watch($scope.option.selectedItems, dataWatcher);
-                // $scope.$parent.$watch($scope.option.selectedItems + '.length', function(a) {
-                    // if (a != selectItemslength) {
-                        // dataWatcher($scope.$eval($scope.option.selectedItems));
-                    // }
-                // });
-                
+				console.log("option:", $scope.option );
+				console.log("config:", this.config);
 				//watch the data change, 
-				//To study the ng-grid 
+				//To study the ng-grid
+				// if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                 var prevlength = 0;
                 var dataWatcher = function (a) {
                 	if (typeof $scope.option.data == "string") {
@@ -53,7 +45,6 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	                    root.config.data = $scope.thedata;
 	                }
                 };
-                // if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
                 $scope.$parent.$watch($scope.option.data, dataWatcher);
                 $scope.$parent.$watch($scope.option.data + '.length', function(a) {
                     if (a != prevlength) {
@@ -182,7 +173,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	        	               '<div class="anCheckbox"><span dir="checkbox" ng-class="anrow.checkboxClassFuc()"></span></div>' :
 	        	               '';
 	        	var row = checkbox + 
-	        			  '<ol  class="clearfix">' +
+	        			  '<ol class="clearfix">' +
 						      '<ancell ng-repeat="col in anrowColumns" row-data="anrowData" col-data="col"></ancell>' + 
 						  '</ol>';	
 				$element.append($compile(row)($scope)); 
@@ -318,7 +309,7 @@ angular.module('anGrid.services', [])
 				option.columnDefs.splice(i, 1, col);
 			});
 	    	// default config object, config is a global object of angrid
-	        return angular.extend({
+	        option = angular.extend({
 	        	//data:                        [],
 	        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
 		        canSelectRows:               true,      //the flag that decide user can select rows or not
@@ -332,6 +323,8 @@ angular.module('anGrid.services', [])
 		        _orderByPredicate:           "",        //the orderby field name
 		        _orderByreverse:             false      //the orderby reverse flag
 			}, option);
+			
+			return option;
 		}	
 	})
 	.factory('widthServices', function(){
@@ -372,12 +365,22 @@ angular.module('anGrid.services', [])
 		}	
 	})
 	
-//TODO:we need filter function for date and chinese character
 angular.module('anGrid.filters', [])
 	.filter('tostring', function () {
 	    return function (input) {
-	    	if(input !== undefined)
-	        return input.toString();
+	    	//input type: string, number(int, float, NaN), boolean, object(object, array, null), function, undefined 
+	    	switch ( typeof(input)) {
+	            case "undefined":
+	                return "undefined";
+	            case "function": 
+	            //you'd better not use function, just use filter
+	            	return input();
+	            default:
+	            	if(input == null){
+	            		return "null"
+	            	}
+	                return input.toString();
+	        }
 	    };
 	})
 //most of filters are custom filter, you should define them yourself and inject them into angrid

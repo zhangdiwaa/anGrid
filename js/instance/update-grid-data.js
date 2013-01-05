@@ -7,7 +7,6 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     	
     	//demo1
     	$scope.angridOptions = {
-    		angridStyle:                 "th-list",
     		multiSelect:                 false,  //设置为单选
 			data:                        "myData", //数据输入
 	        selectedItems:               $scope.mySelections, //返回选中对象

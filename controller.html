@@ -40,11 +40,14 @@
 		 	$scope.array = [1,2,3];
 		 }
 		 
+		 var o1 = {};
+		 angular.extend(o1, {a:1}, {a:2})
+		 console.log(o1)
 		}
 		 
 		function ChildCtrl($scope){
 		 var parent = $scope.$parent;
-		 console.log(parent)
+		 //console.log(parent)
 		 $scope.name = 'Mattie';
 		 $scope.setname = function(){
 		 	$scope.name = "ChildCtrl";
