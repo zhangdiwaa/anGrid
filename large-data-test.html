@@ -26,7 +26,7 @@
 	
 	<script src="js/angrid.js"></script><!-- my grid plugin -->
 	<script src="js/filter.js"></script><!-- custom common filter -->
-	<script src="js/resource.js"></script><!-- resource module -->
+	<script src="js/largeResource.js"></script><!-- resource module -->
 	<script src="js/instance/update-grid-data.js"></script><!-- main ng-app module -->
 </head>
 
@@ -38,22 +38,17 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 			<div id="dojo_actions" class="relative-top">
 				<div class="actions pull-left">
 					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="setTimeData()" title="模拟ajax传入数据"><i class="icon-white icon-time"></i> 数据{{setTime}}毫秒后填充</button>
+						<button class="btn btn-primary" ng-click="queryData()"><i class="icon-white icon-plus-sign"></i> 填充数据</button>
 					</div>
 					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="resetData()" title="清空所有行"><i class="icon-white icon-minus-sign"></i> 清空数据</button>
-					</div>
-					
-					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="deleteSelectData()" title="删除选中行"><i class="icon-white icon-remove"></i> 删除选中行</button>
+						<button class="btn btn-primary" ng-click="resetData()"><i class="icon-white icon-minus-sign"></i> 清空数据</button>
 					</div>
 					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="insertData()" title="添加一行"><i class="icon-white icon-plus-sign"></i> 增加数据</button>
+						<button class="btn btn-primary" ng-click="setTimeData()"><i class="icon-white icon-time"></i> 数据{{setTime}}毫秒后填充</button>
 					</div>
 					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="updateData()" title="暂时用预加载数据进行修改，日后可以改成对话框或者在行内修改"><i class="icon-white icon-edit"></i> 修改选中行</button>
+						<button class="btn btn-primary" ng-click="deleteSelectData()"><i class="icon-white icon-remove"></i> 删除选中项</button>
 					</div>
-					
 					<div class="btn-group">
 						<button class="btn {{(angridOptions.angridStyle != 'th-list') || 'active'}}"  ng-click="angridOptions.angridStyle='th-list'"><i class="icon-th-list"></i></button>
 						<button class="btn {{(angridOptions.angridStyle != 'th-large') || 'active'}}"  ng-click="angridOptions.angridStyle='th-large'"><i class="icon-th-large"></i></button>
@@ -62,10 +57,9 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 				</div>
 				<div class="actions pull-right">
 					<div class="btn-group filter">
-		                <input id="inputIcon" type="text" ng-model="angridOptions.searchfilter" />
+		                <input id="inputIcon" type="text" />
 		                <i class="icon-search"></i>
 		            </div>
-		            
 		            <div class="btn-group">
 						<button class="btn" ><i class="icon-book"></i></button>
 					</div>
@@ -76,15 +70,18 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 			
 			<div class="relative-bottom">
 				<!-------------- let's test angrid plugin!------------------------>
+				
 				<div angrid="angridOptions"></div>
 				
 			</div><!-- end of .relative-bottom -->
 		</div><!-- end of .relative &-->
 	</div>
 	<div id="bottom">
-		<p>
-			angridOptions.searchfilter: {{angridOptions.searchfilter}}
-		</p>
+		<P>
+			myData.length : 
+			<!-- <button ng-click="mySelections=[]" >reset</button> -->
+			{{myData.length }}
+		</P>
 		<P>
 			mySelections : 
 			<!-- <button ng-click="mySelections=[]" >reset</button> -->
@@ -96,27 +93,9 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 		<p>
 			angridOptions.selectedItems: {{angridOptions.selectedItems}}
 		</p>
-		<p>
-			 wa = angridOptions.selectedItems:  {{ wa = angridOptions.selectedItems }}
-		</p>
-		<p>
-			wa : {{ wa }}
-		</p>
 	</div>
 </div> <!-- end of #instanceApp -->
 	
 
-<!-- <div class="modal" id="myModal" class="hidden">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">�</a>
-    <h3>��F�</h3>
-  </div>
-  <div class="modal-body">
-    <p>��F��</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn">s�</a>
-    <a href="#" class="btn btn-primary">�X��</a>
-  </div>
-</div> -->
+
 </body>

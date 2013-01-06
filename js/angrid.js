@@ -7,6 +7,9 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    transclude: true,
 		    //scope must be true so that we can use $scope.$eval('string')
 		    scope: true,
+		    // scope: {
+		    	// search: '=search'
+		    // },
 		    controller: function($scope, $element, $attrs, $transclude ) {
 		    	var root = this;
 		    	//there are there three local variables
@@ -29,6 +32,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.columnDefs =                 this.config.columnDefs;
 				$scope.option.enableSorting =              this.config.enableSorting;
 				$scope.option.selectedItems =              this.config.selectedItems;
+				$scope.option.searchFilter =               this.config.searchFilter;
+				$scope.option.showFooter =                 this.config.showFooter;
 				$scope.option._orderByPredicate =          this.config._orderByPredicate;
 				$scope.option._orderByreverse =            this.config._orderByreverse;
 				
@@ -51,8 +56,6 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                         dataWatcher($scope.$eval($scope.option.data));
                     }
                 });
-                
-                //console.log("config:", this.config, "option:", $scope.option);
 		    },
 		    template:
 		    	//TODO: to complie templete
@@ -64,10 +67,13 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					'</div>' +
 					'<div class="anBody"><!-- tbody -->' +
 						'<ul>' +
-							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse" anrow-data="rowdata" selects="option.selectedItems" ></anrow>' + 
+							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" ></anrow>' + 
 						'</ul>' +
 					'</div>' +
-					'<div class="footer">{{option.angridStyle}}</div>' +
+					'<div class="footer" ng-show="option.showFooter">'+
+						'<p>option.searchFilter:{{ search.$ = option.searchFilter }}</p>'+
+						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="search.$" /><i class="icon-search"></i></div>' +
+					'</div>' +
 				'</div>',
 		    replace: true
 	    };
@@ -197,8 +203,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                     // post: function ($scope, $element, $attr) {
                   	    // var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 						// var templete = 
-							// $scope.colData.cellTemplate ? 
-							// $scope.colData.cellTemplate : 
+							// $scope.colData.columnTemplete ? 
+							// $scope.colData.columnTemplete : 
 							// '<span ng-bind-html="rowData[colData.field] '+ filter +'"></span>';
 		          	    // //Angular's jQuery lite provides the following methods:
 		          	    // $element.append($compile(templete)($scope));
@@ -209,8 +215,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 	        	filter += " | tostring";
 				var templete = 
-					$scope.colData.cellTemplate ? 
-					$scope.colData.cellTemplate : 
+					$scope.colData.columnTemplete ? 
+					$scope.colData.columnTemplete : 
 					//ng-bind-html can only accept string argument
 					'<span ng-bind-html="rowData[colData.field]'+ filter +'"></span>';
           	    //Angular's jQuery lite provides the following methods:
@@ -302,7 +308,7 @@ angular.module('anGrid.services', [])
 		        	width:                   '',         //the substitutes of cssClass, defined the width from 0% to 100%
 		        	sortable:                true,       //column sortable or not
 		        	columnFilter:            '',         //costom column filter for a column
-		        	cellTemplate:            false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
+		        	columnTemplete:          false,      //if use it, it will replace the default ancell template, you'd better know the structure of angrid
 		        	_sortIconflag:           false,      //the flag that decide display the sortIcon or not, you should not set
 		        	_style:                  ''
 				}, col);
@@ -311,6 +317,7 @@ angular.module('anGrid.services', [])
 	    	// default config object, config is a global object of angrid
 	        option = angular.extend({
 	        	//data:                        [],
+	        	
 	        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
 		        canSelectRows:               true,      //the flag that decide user can select rows or not
 		        multiSelect:                 true,      //the flag that decide user can select multiple rows or not
@@ -320,6 +327,8 @@ angular.module('anGrid.services', [])
 		        columnDefs:                  [],        //this is just reminding that option has to have an attr named columnDefs
 		        enableSorting:               true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
 		        selectedItems:               [],        //return the data of select rows
+		        searchFilter:                "",        //search filter
+		        showFooter:                  false,     //show footer or not
 		        _orderByPredicate:           "",        //the orderby field name
 		        _orderByreverse:             false      //the orderby reverse flag
 			}, option);
@@ -405,5 +414,26 @@ angular.module('anGrid.filters', [])
 	      return out;
 	    }
 	 })
+	 /**
+ * Wraps the
+ * @param text {string} haystack to search through
+ * @param search {string} needle to search for
+ * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
+ */
+	.filter('highlight', function () {
+	    return function (text, search, caseSensitive) {
+	        if (search || angular.isNumber(search)) {
+		        text = text.toString();
+		        search = search.toString();
+		        if (caseSensitive) {
+		            return text.split(search).join('<span class="ui-match">' + search + '</span>');
+		        } else {
+		            return text.replace(new RegExp(search, 'gi'), '<span class="ui-match">$&</span>');
+		        }
+	        } else {
+	          return text;
+	        }
+	    };
+	});
 	 
 angular.module('anGrid', ['anGrid.services', 'anGrid.directives', 'anGrid.filters']);

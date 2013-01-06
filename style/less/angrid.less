@@ -35,13 +35,12 @@
 }
 
 .anGrid {
-    height: 100%; width: 100%; overflow: hidden;  margin:5px;
+    height: 100%; width: auto; overflow: hidden;  margin:5px; 
     /*anGrid list style, just like table*/
     &.th-list {
         ul {
         	margin: 0;                                             
             > li {
-            	
                 /*row (tr)*/
                 position: relative; text-align: center; overflow: hidden; list-style: none;                
                 /*you may change here*/
@@ -64,8 +63,8 @@
         	.caretup { border-bottom: 4px solid #000000; }
         	.sortable { cursor: pointer; }
          }
-        .anBody { overflow-y: auto; overflow-x: hidden; }
-        .anFooter { overflow: hidden; }
+        .anBody { overflow-y: auto; overflow-x: hidden; height: 200px; width: 100%; }
+        .anFooter { overflow: hidden; width: 100%; }
         /*header cell style*/
         
         /*row with selecting row checkbox*/
@@ -116,6 +115,7 @@
 }
 
 /*for sepcial gird*/
+
 .instance{
     &.th-list {
     	.col0 { background-color: #fff; left:0px; right:0px; }
@@ -158,3 +158,5 @@
         .col11 { display: none; }
     }
 }
+/*filter highlight*/
+.ui-match { background: yellow; }
