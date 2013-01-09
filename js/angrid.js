@@ -118,40 +118,43 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						if ($scope.anrowData.selected){
 							$scope.anrowData.selected = false;
 						    var oldselectedItems = $angridCtrl.config.selectedItems;
-						    //$angridCtrl.config.selectedItems = [];
 						    $scope.selectedItems = [];
 					    	angular.forEach(oldselectedItems, function(row){
-						    	if(row.selected) //$angridCtrl.config.selectedItems.push(row);
+						    	if(row.selected) 
 						    		$scope.selectedItems.push(row);
 						    });	
 						}else{
 							$scope.anrowData.selected = true;
-							//$angridCtrl.config.selectedItems.push($scope.anrowData);
 							$scope.selectedItems.push($scope.anrowData);
 						}
 					},
 					//SingleSelect
 					singleSelectFuc: function(){
 					    if ($scope.anrowData.selected){
-					    	$scope.anrowData.selected = false;
-					    	//$angridCtrl.config.selectedItems = [];
-					    	$scope.selectedItems = [];
+					    	if($scope.selectedItems.length > 1){
+					    		angular.forEach($angridCtrl.config.data, function(rowdata){
+							    	rowdata.selected = false;
+							    });
+							    $scope.selectedItems = [];
+							    $scope.anrowData.selected = true;
+					    		$scope.selectedItems.push($scope.anrowData);
+					    	}else{
+					    		$scope.anrowData.selected = false;
+					    		$scope.selectedItems = [];
+					    	}
+					    	
 					    }else{
 					    	angular.forEach($angridCtrl.config.data, function(rowdata){
 						    	rowdata.selected = false;
 						    });
 					    	$scope.anrowData.selected = true;
-					    	// $angridCtrl.config.selectedItems = [];
-					    	// $angridCtrl.config.selectedItems.push($scope.anrowData);
 					    	$scope.selectedItems = [];
 					    	$scope.selectedItems.push($scope.anrowData);
 					    }
 					    
 					},
 					//return selected rows' data to $angridCtrl.config.selectedItems
-					
 					toggleSelectedFuc: function($event){
-						//TODO : maybe we need a selectionService just like ng-grid 1779
 				 		if (!$angridCtrl.config.canSelectRows) {
 				            return;
 				        }
@@ -159,13 +162,14 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				        	return;
 				        }
 				        //we use the attribute named dir to justify user clicked checkbox or not in a row
-				        if($angridCtrl.config.selectWithCheckboxOnly && $event.srcElement.dir != "checkbox"){
+				        if($angridCtrl.config.selectWithCheckboxOnly && $event.target.dir != "checkbox"){
 				        	return;
 				        }
 						if($angridCtrl.config.multiSelect){
-						    if($angridCtrl.config.multiSelectWithCheckbox == true && $event.srcElement.dir != "checkbox" ){
+						    if($angridCtrl.config.multiSelectWithCheckbox == true && $event.target.dir!= "checkbox" ){
 						    	this.singleSelectFuc();
 	                        }else{
+	                        	
 	                        	this.multiSelectFuc();
 	                        }
 						}else{

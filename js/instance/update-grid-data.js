@@ -1,9 +1,9 @@
 //main mudule: instanceApp    
 angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid'])
     .controller('instanceApp.controller', function ($scope, instancesData) {
-	    
-	    $scope.myData = [];
     	$scope.mySelections = [];
+    	$scope.myData = [];
+    	$scope.myData = instancesData.query();
     	//demo1
     	$scope.angridOptions = {
 			data:                        "myData", //数据输入
@@ -39,7 +39,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
    		$scope.setTime = 100;
    		$scope.setTimeData = function(){
    			setTimeout(function () {
-				$scope.myData = instancesData.query();
+				$scope.queryData();
 			    //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
 			    $scope.$digest();
 			}, $scope.setTime)
