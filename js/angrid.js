@@ -7,9 +7,6 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    transclude: true,
 		    //scope must be true so that we can use $scope.$eval('string')
 		    scope: true,
-		    // scope: {
-		    	// search: '=search'
-		    // },
 		    controller: function($scope, $element, $attrs, $transclude ) {
 		    	var root = this;
 		    	//there are there three local variables
@@ -36,6 +33,10 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.showFooter =                 this.config.showFooter;
 				$scope.option._orderByPredicate =          this.config._orderByPredicate;
 				$scope.option._orderByreverse =            this.config._orderByreverse;
+				
+				//$scope.angrid is only use in angrid's scope
+				$scope.angrid = {};
+				$scope.angrid.hasFooterClass = $scope.option.showFooter ? "hasFooter" : "";
 				
 				console.log("option:", $scope.option );
 				console.log("config:", this.config);
@@ -65,14 +66,16 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 							'<anhead sort-field="option._orderByPredicate" sort-reverse="option._orderByreverse" selects="option.selectedItems"></anhead>' + 
 						'</ul>' +
 					'</div>' +
-					'<div class="anBody"><!-- tbody -->' +
+					'<div class="anBody {{angrid.hasFooterClass}}"><!-- tbody -->' +
 						'<ul>' +
 							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" ></anrow>' + 
 						'</ul>' +
 					'</div>' +
-					'<div class="footer" ng-show="option.showFooter">'+
-						'<p>option.searchFilter:{{ search.$ = option.searchFilter }}</p>'+
+					'<div class="anFooter" ng-show="option.showFooter">'+
 						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="search.$" /><i class="icon-search"></i></div>' +
+					'</div>' +
+					'<div class="expression">' +
+					'{{ search.$ = option.searchFilter }}'+
 					'</div>' +
 				'</div>',
 		    replace: true

@@ -35,7 +35,24 @@
 }
 
 .anGrid {
-    height: 100%; width: auto; overflow: hidden;  margin:5px; 
+    height: 100%; width: 100%; overflow: hidden; position: relative; border:1px solid #DDD;
+    /*structure*/
+    .anHead { font-weight: bold; overflow: hidden; height: 31px; position: absolute; width:100%; top: 0px; left:0px; right: 0px;
+    	.caretdown, 
+    	.caretup { margin-top: 13px; margin-left: 2px; display: inline-block; width: 0; height: 0; vertical-align: top; border-left: 4px solid transparent; border-right: 4px solid transparent;  opacity: 0.3; filter: alpha(opacity=30); content: ""; }
+    	.caretdown { border-top: 4px solid #000000; }
+    	.caretup { border-bottom: 4px solid #000000; }
+    	.sortable { cursor: pointer; }
+    }
+    .anBody { overflow-y: auto; overflow-x: hidden; position: absolute; top: 31px; left:0px; right: 0px; bottom: 0px;
+    	&.hasFooter { bottom: 31px; } 
+    }
+    .anFooter { overflow: hidden; background: #DDD; position: absolute; height:31px; bottom: 0px; right: 0px; left: 0px;
+    	> * { display: inline-block; }
+    	.filter { margin:2px 0 0 10px; }
+    }
+    .expression { display:none; }
+    
     /*anGrid list style, just like table*/
     &.th-list {
         ul {
@@ -55,18 +72,6 @@
                 } 
             }                     
         }
-        /*structure*/
-        .anHead { font-weight: bold; overflow: hidden; height: 31px;
-        	.caretdown, 
-        	.caretup { margin-top: 13px; margin-left: 2px; display: inline-block; width: 0; height: 0; vertical-align: top; border-left: 4px solid transparent; border-right: 4px solid transparent;  opacity: 0.3; filter: alpha(opacity=30); content: ""; }
-        	.caretdown { border-top: 4px solid #000000; }
-        	.caretup { border-bottom: 4px solid #000000; }
-        	.sortable { cursor: pointer; }
-         }
-        .anBody { overflow-y: auto; overflow-x: hidden; height: 200px; width: 100%; }
-        .anFooter { overflow: hidden; width: 100%; }
-        /*header cell style*/
-        
         /*row with selecting row checkbox*/
         .anCheckbox { position: absolute; top:0px; left:0px; width:25px; }
         .anCheckbox + ol { left: 25px; }
@@ -76,6 +81,7 @@
         .even {background-color:#FFF; }
         .selectable { cursor: pointer; }
     }
+    
     /*anGrid large thumb style, just like windows files icon*/
     &.th-large, &.th {
         ul {
@@ -107,15 +113,13 @@
             }                     
         }
         .anHead { display: none; }
-        .anBody { overflow-y: auto; overflow-x: hidden; }
-        .anFooter { display:none; }
+        .anBody { top: 0px; left:0px; right: 0px; bottom: 0px; }
     }
     &.th-large ul > li { width: 100px; height: 100px; margin: 0 10px 10px 0; }
     &.th ul > li { width: 30px; height: 30px; margin: 0 10px 10px 0; }
 }
 
 /*for sepcial gird*/
-
 .instance{
     &.th-list {
     	.col0 { background-color: #fff; left:0px; right:0px; }

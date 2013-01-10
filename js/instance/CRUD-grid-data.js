@@ -11,7 +11,7 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
     		multiSelectWithCheckbox:     true, //只能用多选框多选
 	        selectedItems:               $scope.mySelections, //返回选中对象
 	        searchFilter:                '',
-	        showFooter:                  false,
+	        showFooter:                  true,
 		    columnDefs: 					 //用一个对象数组定义每一列
 		    [ 
 				{ field: 'name', displayName:'虚拟机名称', cssClass:'col1', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
