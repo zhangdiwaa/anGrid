@@ -27,7 +27,7 @@
 	<script src="js/angrid.js"></script><!-- my grid plugin -->
 	<script src="js/filter.js"></script><!-- custom common filter -->
 	<script src="js/resource.js"></script><!-- resource module -->
-	<script src="js/instance/update-grid-data.js"></script><!-- main ng-app module -->
+	<script src="js/instance/CRUD-grid-data.js"></script><!-- main ng-app module -->
 </head>
 
 <body>
@@ -37,9 +37,6 @@ ng-app="instanceApp" ng-controller="instanceApp.controller">
 		<div class="relative">
 			<div id="dojo_actions" class="relative-top">
 				<div class="actions pull-left">
-					<div class="btn-group">
-						<button class="btn btn-primary" ng-click="queryData()" title="模拟ajax传入数据"><i class="icon-white icon-time"></i> 数据填充</button>
-					</div>
 					<div class="btn-group">
 						<button class="btn btn-primary" ng-click="setTimeData()" title="模拟ajax传入数据"><i class="icon-white icon-time"></i> 数据{{setTime}}毫秒后填充</button>
 					</div>

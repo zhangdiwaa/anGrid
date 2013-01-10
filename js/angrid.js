@@ -217,12 +217,15 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
             // } 
 	        link: function($scope, $element, $attrs, $angridCtrl) {
 	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
-	        	filter += " | tostring";
-				var templete = 
+	        	var templete = 
+	        		filter == "" ?
+	        		'<span>{{rowData[colData.field]}}</span>':
+	        		//ng-bind-html can only accept string argument
+	        	 	'<span ng-bind-html="rowData[colData.field]'+ filter +' | tostring"></span>';
+				templete = 
 					$scope.colData.columnTemplete ? 
 					$scope.colData.columnTemplete : 
-					//ng-bind-html can only accept string argument
-					'<span ng-bind-html="rowData[colData.field]'+ filter +'"></span>';
+					templete;
           	    //Angular's jQuery lite provides the following methods:
           	    $element.append($compile(templete)($scope));
 	        }   
