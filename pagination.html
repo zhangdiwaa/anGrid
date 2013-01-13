@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Simple Layout Demo</title>
+	<title>Pagination Demo</title>
 	<meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -27,8 +27,8 @@
 	
 	<script src="js/angrid.js"></script><!-- my grid plugin -->
 	<script src="js/filter.js"></script><!-- custom common filter -->
-	<script src="js/resource.js"></script><!-- resource module -->
-	<script src="js/instance/update-grid-data.js"></script><!-- main ng-app module -->
+	<script src="js/largeResource.js"></script><!-- resource module -->
+	<script src="js/instance/pagination.js"></script><!-- main ng-app module -->
     
 	<script>
 	var outerLayout, middleLayout; // a var is required because this page utilizes: myLayout.allowOverflow() method
@@ -82,7 +82,7 @@
 
 <div class="outer-center" id="instanceApp" ng-app="instanceApp" ng-controller="instanceApp.controller">
 	<div class="middle-center">
-		<!-- <div class="relative">
+		<div class="relative">
 			<div id="dojo_actions" class="relative-top">
 				<div class="actions pull-left">
 					<div class="btn-group">
@@ -107,7 +107,7 @@
 				</div>
 				<div class="actions pull-right">
 					<div class="btn-group filter">
-		                <input id="inputIcon" type="text" ng-model="angridOptions.searchfilter" />
+		                <input id="inputIcon" type="text" ng-model="angridOptions.searchFilter" />
 		                <i class="icon-search"></i>
 		            </div>
 		            <div class="btn-group">
@@ -120,8 +120,7 @@
 			<div class="relative-bottom">
 				<div angrid="angridOptions"></div>
 			</div>
-		</div> -->
-		<div angrid="angridOptions"></div>
+		</div>
 	</div>
 	
 	
@@ -153,6 +152,34 @@
 </div> 
 
 
+<div class="ngPagerContainer" style="float: right; margin-top: 10px;" ng-show="footerVisible &amp;&amp; enablePaging">
+	<div style="float:left; margin-right: 10px;" class="ngRowCountPicker">
+		<span style="float: left; margin-top: 3px;" class="ngLabel ng-binding">Page Size:</span>
+		<select style="float: left;height: 27px; width: 100px" ng-model="pagingOptions.pageSize" class="ng-pristine ng-valid">
+			<!-- ngRepeat: size in pagingOptions.pageSizes -->
+			<option ng-repeat="size in pagingOptions.pageSizes" class="ng-scope ng-binding" value="250">250</option>
+			<option ng-repeat="size in pagingOptions.pageSizes" class="ng-scope ng-binding" value="500">500</option>
+			<option ng-repeat="size in pagingOptions.pageSizes" class="ng-scope ng-binding" value="1000">1000</option>
+		</select>
+	</div>
+	<div style="float:left; margin-right: 10px; line-height:25px;" class="ngPagerControl">
+		<button class="ngPagerButton" ng-click="pageToFirst()" ng-disabled="cantPageBackward()" title="First Page">
+			<div class="ngPagerFirstTriangle">
+				<div class="ngPagerFirstBar"></div>
+			</div>
+		</button>
+		<button class="ngPagerButton" ng-click="pageBackward()" ng-disabled="cantPageBackward()" title="Previous Page">
+			<div class="ngPagerFirstTriangle ngPagerPrevTriangle"></div>
+		</button>
+		<input class="ngPagerCurrent ng-valid ng-dirty" type="text" style="width:50px; height: 24px; margin-top: 1px; padding: 0px 4px;" ng-model="pagingOptions.currentPage">
+		<button class="ngPagerButton" ng-click="pageForward()" ng-disabled="cantPageForward()" title="Next Page">
+			<div class="ngPagerLastTriangle ngPagerNextTriangle"></div>
+		</button>
+		<button class="ngPagerButton" ng-click="pageToLast()" ng-disabled="cantPageToLast()" title="Last Page">
+				<div class="ngPagerLastTriangle"><div class="ngPagerLastBar"></div></div>
+		</button>
+	</div>
+</div>
 
 
 </body>

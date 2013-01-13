@@ -30,6 +30,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.enableSorting =              this.config.enableSorting;
 				$scope.option.selectedItems =              this.config.selectedItems;
 				$scope.option.searchFilter =               this.config.searchFilter;
+				$scope.option.searchHighlight =            this.config.searchHighlight;
+		        $scope.option.searchHighlight =            this.config.caseSensitive;
 				$scope.option.showFooter =                 this.config.showFooter;
 				$scope.option._orderByPredicate =          this.config._orderByPredicate;
 				$scope.option._orderByreverse =            this.config._orderByreverse;
@@ -38,8 +40,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.angrid = {};
 				$scope.angrid.hasFooterClass = $scope.option.showFooter ? "hasFooter" : "";
 				
-				console.log("option:", $scope.option );
-				console.log("config:", this.config);
+				
 				//watch the data change, 
 				//To study the ng-grid
 				// if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
@@ -57,6 +58,9 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                         dataWatcher($scope.$eval($scope.option.data));
                     }
                 });
+                
+                console.log("option:", $scope.option );
+				console.log("config:", this.config);
 		    },
 		    template:
 		    	//TODO: to complie templete
@@ -68,11 +72,11 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					'</div>' +
 					'<div class="anBody {{angrid.hasFooterClass}}"><!-- tbody -->' +
 						'<ul>' +
-							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" ></anrow>' + 
+							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" search-filter="option.searchFilter" ></anrow>' + 
 						'</ul>' +
 					'</div>' +
 					'<div class="anFooter" ng-show="option.showFooter">'+
-						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="search.$" /><i class="icon-search"></i></div>' +
+						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>' +
 					'</div>' +
 					'<div class="expression">' +
 					'{{ search.$ = option.searchFilter }}'+
@@ -90,7 +94,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    transclude: true,
 		    scope: { 
 		  	    anrowData: "=anrowData",
-		  	    selectedItems: "=selects"
+		  	    selectedItems: "=selects",
+		  	    searchFilter: "=searchFilter" 
 		    },
 		    template:
 	        //TODO: to complie templete
@@ -187,7 +192,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	        	               '';
 	        	var row = checkbox + 
 	        			  '<ol class="clearfix">' +
-						      '<ancell ng-repeat="col in anrowColumns" row-data="anrowData" col-data="col"></ancell>' + 
+						      '<ancell ng-repeat="col in anrowColumns" row-data="anrowData" col-data="col" search-filter="searchFilter"></ancell>' + 
 						  '</ol>';	
 				$element.append($compile(row)($scope)); 
 	        }
@@ -201,7 +206,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    transclude: true,
 		    scope: {
 		    	rowData: "=rowData",
-		    	colData: "=colData"
+		    	colData: "=colData",
+		    	searchFilter: "=searchFilter"
 		    },
 		    template: '<li class="{{colData.cssClass}}" style="{{colData._style}}" title="{{rowData[colData.field]}}"></li>',
 	        replace: true,
@@ -219,10 +225,13 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                 // };
             // } 
 	        link: function($scope, $element, $attrs, $angridCtrl) {
+	        	//console.log($angridCtrl);
+	        	$scope.caseSensitive = $angridCtrl.config.caseSensitive;
+	        	console.log($scope.caseSensitive)
 	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 	        	var templete = 
 	        		filter == "" ?
-	        		'<span>{{rowData[colData.field]}}</span>':
+	        		'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive"></span>' :
 	        		//ng-bind-html can only accept string argument
 	        	 	'<span ng-bind-html="rowData[colData.field]'+ filter +' | tostring"></span>';
 				templete = 
@@ -326,8 +335,6 @@ angular.module('anGrid.services', [])
 			});
 	    	// default config object, config is a global object of angrid
 	        option = angular.extend({
-	        	//data:                        [],
-	        	
 	        	angridStyle:                 'th-list', //angrid style, such as th-list, th, th-large
 		        canSelectRows:               true,      //the flag that decide user can select rows or not
 		        multiSelect:                 true,      //the flag that decide user can select multiple rows or not
@@ -338,6 +345,8 @@ angular.module('anGrid.services', [])
 		        enableSorting:               true,      //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
 		        selectedItems:               [],        //return the data of select rows
 		        searchFilter:                "",        //search filter
+		        searchHighlight:             false,		//search text hightlight
+		        caseSensitive:               true,      //hightlight case Sensitive
 		        showFooter:                  false,     //show footer or not
 		        _orderByPredicate:           "",        //the orderby field name
 		        _orderByreverse:             false      //the orderby reverse flag
@@ -402,8 +411,8 @@ angular.module('anGrid.filters', [])
 	        }
 	    };
 	})
-//most of filters are custom filter, you should define them yourself and inject them into angrid
-//in angrid we only support a little easy filter
+	//most of filters are custom filter, you should define them yourself and inject them into angrid
+	//in angrid we only support a little easy filter
     //'checkmark', return character of right or wrong 
 	.filter('checkmark', function () {
 	    return function (input) {
@@ -424,12 +433,12 @@ angular.module('anGrid.filters', [])
 	      return out;
 	    }
 	 })
-	 /**
- * Wraps the
- * @param text {string} haystack to search through
- * @param search {string} needle to search for
- * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
- */
+	/**
+	 * Wraps the
+	 * @param text {string} haystack to search through
+	 * @param search {string} needle to search for
+	 * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
+	 */
 	.filter('highlight', function () {
 	    return function (text, search, caseSensitive) {
 	        if (search || angular.isNumber(search)) {
