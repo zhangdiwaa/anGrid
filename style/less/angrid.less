@@ -1,55 +1,30 @@
-.ellipsis {
-    white-space: nowrap;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
+/*for all & used in angrid*/
+.ellipsis { white-space: nowrap; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; overflow: hidden; }
+.dijitCheckBox,  .dijitCheckBoxIcon { background-image: url("../img/checkboxRadioButtonStates.png"); background-repeat: no-repeat; width: 15px; height: 16px; margin: 0 2px 0 0; padding: 0; }
+.dijitCheckBox,  .dijitToggleButton .dijitCheckBoxIcon { background-position: -15px; }
+.dijitCheckBoxChecked, .dijitToggleButtonChecked .dijitCheckBoxIcon { background-position: 0; }
+.dijitCheckBoxDisabled { background-position: -75px; }
+.dijitCheckBoxCheckedDisabled { background-position: -60px; }
+.dijitCheckBoxHover { background-position: -45px; }
+.dijitCheckBoxCheckedHover { background-position: -30px; }
+.anLabel { font-weight: bold; }
 
-.dijitCheckBox,  .dijitCheckBoxIcon {
-  background-image: url("../img/checkboxRadioButtonStates.png");
-  background-repeat: no-repeat;
-  width: 15px;
-  height: 16px;
-  margin: 0 2px 0 0;
-  padding: 0;
-}
-
-.dijitCheckBox,  .dijitToggleButton .dijitCheckBoxIcon {
-  background-position: -15px;
-}
-.dijitCheckBoxChecked, .dijitToggleButtonChecked .dijitCheckBoxIcon {
-  background-position: 0;
-}
-.dijitCheckBoxDisabled {
-  background-position: -75px;
-}
- .dijitCheckBoxCheckedDisabled {
-  background-position: -60px;
-}
- .dijitCheckBoxHover {
-  background-position: -45px;
-}
-.dijitCheckBoxCheckedHover {
-  background-position: -30px;
-}
-
+/*angrid*/
 .anGrid {
-    height: 100%; width: 100%; overflow: hidden; position: relative; border:1px solid #DDD;
     /*structure*/
+    height: 100%; width: 100%; overflow: hidden; position: relative; border:1px solid #DDD;
     .anHead { font-weight: bold; overflow: hidden; height: 31px; position: absolute; width:100%; top: 0px; left:0px; right: 0px;
-    	.caretdown, 
-    	.caretup { margin-top: 13px; margin-left: 2px; display: inline-block; width: 0; height: 0; vertical-align: top; border-left: 4px solid transparent; border-right: 4px solid transparent;  opacity: 0.3; filter: alpha(opacity=30); content: ""; }
-    	.caretdown { border-top: 4px solid #000000; }
-    	.caretup { border-bottom: 4px solid #000000; }
-    	.sortable { cursor: pointer; }
+    	  .caretdown, 
+    	  .caretup { margin-top: 13px; margin-left: 2px; display: inline-block; width: 0; height: 0; vertical-align: top; border-left: 4px solid transparent; border-right: 4px solid transparent;  opacity: 0.3; filter: alpha(opacity=30); content: ""; }
+    	  .caretdown { border-top: 4px solid #000000; }
+    	  .caretup { border-bottom: 4px solid #000000; }
+    	  .sortable { cursor: pointer; }
     }
     .anBody { overflow-y: auto; overflow-x: hidden; position: absolute; top: 31px; left:0px; right: 0px; bottom: 0px;
-    	&.hasFooter { bottom: 31px; } 
+    	  &.hasFooter { bottom: 38px; } 
     }
-    .anFooter { overflow: hidden; background: #DDD; position: absolute; height:31px; bottom: 0px; right: 0px; left: 0px;
-    	> * { display: inline-block; }
-    	.filter { margin:2px 0 0 10px; }
+    .anFooter { overflow: hidden; background: #DDD; position: absolute; height:38px; bottom: 0px; right: 0px; left: 0px;
+    	  > * { display: inline-block; }
     }
     .expression { display:none; }
     
@@ -117,7 +92,30 @@
     }
     &.th-large ul > li { width: 100px; height: 100px; margin: 0 10px 10px 0; }
     &.th ul > li { width: 30px; height: 30px; margin: 0 10px 10px 0; }
+    
+    /********Paging Styles **********/
+    .anPager { margin:2px 10px 0 10px; float: right; line-height:30px;
+        > * { float: right; }
+        .anPagerInfo { margin: 0 10px; }
+        .anPagerSize { margin: 0 10px;
+            .anLabel { display: block; line-height: 30px; float: left; }
+            .anPagerSizeSelect { display: block; width:70px; margin-left: 10px; float: left; }
+        }
+        .anPagerCtrl { float: right; }
+        
+    }
+    .anPagerTrianglePrev { width: 0; height: 0; border-style: solid; border-width: 5px 8.7px 5px 0; border-color: transparent #000000 transparent transparent; margin: 2px 0 0 4px; }
+    .anPagerFirstBar { width: 10px; border-left: 2px solid black; margin-top: -6px; height: 12px; margin-left: -3px; }     
+    .anPagerTriangleNext { width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8.7px; border-color: transparent transparent transparent #000000; margin: 2px 0 0 4px; }
+    .anPagerLastBar { width: 10px; border-left: 2px solid black; margin-top: -6px; height: 12px; margin-left: 1px; } 
+    .anPagerTriangleOnly { margin-left: 2px; }
+    
+    /*filter*/
+    .filter { margin:2px 0 0 10px; float:left; line-height:30px; }
+    .ui-match { background: yellow; }
 }
+
+
 
 /*for sepcial gird*/
 .instance{
@@ -162,5 +160,5 @@
         .col11 { display: none; }
     }
 }
-/*filter highlight*/
-.ui-match { background: yellow; }
+
+

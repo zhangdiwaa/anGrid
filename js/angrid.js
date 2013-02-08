@@ -77,12 +77,33 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					'</div>' +
 					'<div class="anFooter" ng-show="option.showFooter">'+
 						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>' +
+						'<div class="anPager">' +
+							'<div class="anPagerCtrl">' +
+								'<div class="input-prepend input-append">' +
+									'<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev"><div class="anPagerFirstBar"></div></div></div></button>' +
+					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev anPagerTriangleOnly"></div></div></button>' +
+					                '<input class="span1" id="anPagerNum" type="text">' +
+					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext anPagerTriangleOnly"></div></div></button>' +
+					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext"><div class="anPagerLastBar"></div></div></div></button>' +
+					            '</div>' +
+							'</div>' +
+							'<div class="anPagerSize">' +
+								'<span class="anLabel">PageSize: </span>' +
+								'<select class="anPagerSizeSelect">' + 
+								    '<option>10</option>' +
+								    '<option>30</option>' +
+								    '<option>60</option>' +
+								'</select>' +
+							'</div>' +
+							'<div class="anPagerInfo"><span class="anLabel">Total Item:</span> {{thedata.length}}</div>' +
+						'</div>' +
 					'</div>' +
 					'<div class="expression">' +
 					'{{ search.$ = option.searchFilter }}'+
 					'</div>' +
 				'</div>',
 		    replace: true
+		    
 	    };
 	    return angrid;
     });
