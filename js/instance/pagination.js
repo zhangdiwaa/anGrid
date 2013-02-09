@@ -2,17 +2,23 @@
 angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid'])
     .controller('instanceApp.controller', function ($scope, instancesData) {
     	$scope.mySelections = [];
-    	$scope.myData = [];
     	$scope.myData = instancesData.query();
+    	$scope.pagingOptions = {
+	        pageSizes: [10, 50, 100], //page Sizes
+	        pageSize: 10, //Size of Paging data
+	        totalServerItems: $scope.myData.length, //how many items are on the server (for paging)
+	        currentPage: 1 //what page they are currently on
+	    };
     	//demo1
     	$scope.angridOptions = {
 			data:                        "myData", //数据输入
 			multiSelectRows:             true, //多选
     		multiSelectWithCheckbox:     true, //只能用多选框多选
 	        selectedItems:               $scope.mySelections, //返回选中对象
+	        pagingOptions:               $scope.pagingOptions, //分页信息
 	        searchFilter:                '',
 	        showFooter:                  true,
-		    columnDefs: 					 //用一个对象数组定义每一列
+		    columnDefs: 				 //用一个对象数组定义每一列
 		    [ 
 				{ field: 'name', displayName:'虚拟机名称', cssClass:'col1', columnTemplete: '<input type="text" ng-model="rowData[colData.field]" class="span1" />'}
                 ,{ field: 'private_ip', displayName:'内网IP', cssClass:'col2'}

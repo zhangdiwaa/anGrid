@@ -12,6 +12,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 		    	//there are there three local variables
 		    	//$scope.option  ------ as the children scope of the controller which has angrid
 		    	//$scope.theData ------ to update the grid data, we need to $scope.theData = $scope.$eval($scope.option.data)
+		    	$scope.theData = [];
+		    	$scope.rowCache = [];
 		    	//this.config ------- set default parameters of angrid, this is this controller's object, can not be read by parent controller
                 $scope.option = $scope.$eval($attrs.angrid);
                 //set the default params of angrid
@@ -33,6 +35,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.searchHighlight =            this.config.searchHighlight;
 		        $scope.option.searchHighlight =            this.config.caseSensitive;
 				$scope.option.showFooter =                 this.config.showFooter;
+				$scope.option.pagingOptions =              this.config.pagingOptions;
 				$scope.option._orderByPredicate =          this.config._orderByPredicate;
 				$scope.option._orderByreverse =            this.config._orderByreverse;
 				
@@ -40,7 +43,77 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.angrid = {};
 				$scope.angrid.hasFooterClass = $scope.option.showFooter ? "hasFooter" : "";
 				
+				/*****pagiation*****/
+				if($scope.option.pagingOptions){
+					$scope.option.pagingOptions = angular.extend({
+			        	pageSizes: [10, 50, 100], //page Sizes
+				        pageSize: 10, //Size of Paging data
+				        totalServerItems: $scope.option.data.length, //how many items are on the server (for paging)
+				        currentPage: 1 //what page they are currently on
+					}, $scope.option.pagingOptions);
+					
+					$scope.pagiation = {
+						maxRows: function(){
+							return Math.max($scope.option.pagingOptions.totalServerItems, $scope.option.data.length);
+						},
+						maxPages: function(){
+							return Math.ceil(this.maxRows() / $scope.option.pagingOptions.pageSize);
+						},
+						pageForward: function(){
+							//TODO
+							var page = $scope.option.pagingOptions.currentPage;
+							$scope.option.pagingOptions.currentPage = Math.min(page + 1, this.maxPages());
+					        // if ($scope.pagingOptions.totalServerItems > 0) {
+					        // } else {
+					            // $scope.pagingOptions.currentPage++;
+					        // }
+					        setRowCache();
+						},
+						pageBackward: function(){
+							var page = $scope.option.pagingOptions.currentPage;
+				        	$scope.option.pagingOptions.currentPage = Math.max(page - 1, 1);
+				        	setRowCache();
+						},
+						pageToFirst: function(){
+							$scope.option.pagingOptions.currentPage = 1;
+							setRowCache();
+						},
+						pageToLast: function(){
+				        	$scope.option.pagingOptions.currentPage = this.maxPages();
+				        	setRowCache();
+						},
+					};
+					
+					var pageTemplete =  
+						'<div class="anPager">' +
+							'<div class="anPagerCtrl">' +
+								'<div class="input-prepend input-append">' +
+									'<button class="btn" ng-click="pagiation.pageToFirst()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev"><div class="anPagerFirstBar"></div></div></div></button>' +
+					                '<button class="btn" ng-click="pagiation.pageBackward()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev anPagerTriangleOnly"></div></div></button>' +
+					                '<input class="span1" id="anPagerNum" type="text" ng-model="option.pagingOptions.currentPage">' +
+					                '<button class="btn" ng-click="pagiation.pageForward()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext anPagerTriangleOnly"></div></div></button>' +
+					                '<button class="btn" ng-click="pagiation.pageToLast()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext"><div class="anPagerLastBar"></div></div></div></button>' +
+					            '</div>' +
+							'</div>' +
+							'<div class="anPagerSize">' +
+								'<span class="anLabel">PageSize: </span>' +
+								'<select class="anPagerSizeSelect" ng-model="option.pagingOptions.pageSize">' + 
+								    '<option ng-repeat="size in option.pagingOptions.pageSizes" value="{{size}}">{{size}}</option>' +
+								'</select>' +
+							'</div>' +
+							'<div class="anPagerInfo"><span class="anLabel">Total Item:</span> {{thedata.length}}</div>' +
+						'</div>';
+					$element.children(".anFooter").append($compile(pageTemplete)($scope)); 
+				}
 				
+				var setRowCache = function(){
+					if($scope.option.pagingOptions){
+                    	var head = $scope.option.pagingOptions.pageSize * ($scope.option.pagingOptions.currentPage -  1);
+                    	var tail = $scope.option.pagingOptions.pageSize * $scope.option.pagingOptions.currentPage;
+                    	$scope.rowCache = $scope.thedata.slice(head, tail);
+                    	console.log(head, tail);
+                    }
+				}
 				//watch the data change, 
 				//To study the ng-grid
 				// if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
@@ -50,6 +123,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	                    prevlength = a ? a.length:0;
 	                    $scope.thedata = $scope.$eval($scope.option.data) || [];
 	                    root.config.data = $scope.thedata;
+	                    
+	                    setRowCache();
 	                }
                 };
                 $scope.$parent.$watch($scope.option.data, dataWatcher);
@@ -59,8 +134,8 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
                     }
                 });
                 
-                console.log("option:", $scope.option );
-				console.log("config:", this.config);
+                // console.log("option:", $scope.option );
+				// console.log("config:", this.config);
 		    },
 		    template:
 		    	//TODO: to complie templete
@@ -72,31 +147,11 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					'</div>' +
 					'<div class="anBody {{angrid.hasFooterClass}}"><!-- tbody -->' +
 						'<ul>' +
-							'<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" search-filter="option.searchFilter" ></anrow>' + 
+							'<anrow ng-repeat="rowdata in rowCache | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" search-filter="option.searchFilter" ></anrow>' + 
 						'</ul>' +
 					'</div>' +
 					'<div class="anFooter" ng-show="option.showFooter">'+
 						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>' +
-						'<div class="anPager">' +
-							'<div class="anPagerCtrl">' +
-								'<div class="input-prepend input-append">' +
-									'<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev"><div class="anPagerFirstBar"></div></div></div></button>' +
-					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev anPagerTriangleOnly"></div></div></button>' +
-					                '<input class="span1" id="anPagerNum" type="text">' +
-					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext anPagerTriangleOnly"></div></div></button>' +
-					                '<button class="btn" type="button"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext"><div class="anPagerLastBar"></div></div></div></button>' +
-					            '</div>' +
-							'</div>' +
-							'<div class="anPagerSize">' +
-								'<span class="anLabel">PageSize: </span>' +
-								'<select class="anPagerSizeSelect">' + 
-								    '<option>10</option>' +
-								    '<option>30</option>' +
-								    '<option>60</option>' +
-								'</select>' +
-							'</div>' +
-							'<div class="anPagerInfo"><span class="anLabel">Total Item:</span> {{thedata.length}}</div>' +
-						'</div>' +
 					'</div>' +
 					'<div class="expression">' +
 					'{{ search.$ = option.searchFilter }}'+
@@ -369,6 +424,7 @@ angular.module('anGrid.services', [])
 		        searchHighlight:             false,		//search text hightlight
 		        caseSensitive:               true,      //hightlight case Sensitive
 		        showFooter:                  false,     //show footer or not
+		        pagingOptions:               false,     //show pagination or not
 		        _orderByPredicate:           "",        //the orderby field name
 		        _orderByreverse:             false      //the orderby reverse flag
 			}, option);
