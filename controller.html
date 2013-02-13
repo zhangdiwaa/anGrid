@@ -33,6 +33,9 @@
 		 $scope.me = 'MainCtrl';
 		 $scope.array = [];
 		 $scope.alternative = $scope.$eval($scope.array);
+		 $scope.selectstr = [10, 20, 30];
+		 $scope.select2 = 10;
+		 
 		 
 		 $scope.setname = function(){
 		 	$scope.name = "MainCtrl";
@@ -75,7 +78,10 @@
    <p>Good {{timeOfDay}}, {{name}}!&nbsp;<button ng-click="setname()">setname</button></p>
    <p ng-controller="BabyCtrl" >Good {{timeOfDay}}, {{name}}!&nbsp;<button ng-click="setname()">setname</button></p>
  </div>
-
+	
+	<select ui-select2 ng-model="select2">
+		<option ng-repeat="s in selectstr">{{s}}</option>
+	</select>
 </body>
 
 </html>

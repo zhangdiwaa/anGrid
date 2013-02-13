@@ -45,11 +45,15 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				
 				/*****pagiation*****/
 				if($scope.option.pagingOptions){
+					
 					$scope.option.pagingOptions = angular.extend({
 			        	pageSizes: [10, 50, 100], //page Sizes
 				        pageSize: 10, //Size of Paging data
 				        totalServerItems: $scope.option.data.length, //how many items are on the server (for paging)
-				        currentPage: 1 //what page they are currently on
+				        currentPage: 1, //what page they are currently on
+				        showTotalItemDiv: true,
+				        showPageSizeSelect: true,
+				        showPageButton: true
 					}, $scope.option.pagingOptions);
 					
 					$scope.pagiation = {
@@ -60,58 +64,75 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 							return Math.ceil(this.maxRows() / $scope.option.pagingOptions.pageSize);
 						},
 						pageForward: function(){
-							//TODO
 							var page = $scope.option.pagingOptions.currentPage;
 							$scope.option.pagingOptions.currentPage = Math.min(page + 1, this.maxPages());
-					        // if ($scope.pagingOptions.totalServerItems > 0) {
-					        // } else {
-					            // $scope.pagingOptions.currentPage++;
-					        // }
-					        setRowCache();
 						},
 						pageBackward: function(){
 							var page = $scope.option.pagingOptions.currentPage;
 				        	$scope.option.pagingOptions.currentPage = Math.max(page - 1, 1);
-				        	setRowCache();
 						},
 						pageToFirst: function(){
 							$scope.option.pagingOptions.currentPage = 1;
-							setRowCache();
 						},
 						pageToLast: function(){
 				        	$scope.option.pagingOptions.currentPage = this.maxPages();
-				        	setRowCache();
 						},
+						cantPageForward: function(){
+							var curPage = $scope.option.pagingOptions.currentPage;
+					        var maxPages = this.maxPages();
+					        if ($scope.option.pagingOptions.totalServerItems > 0) {
+					            return !(curPage < maxPages);
+					        } else {
+					            return grid.data.length < 1;
+					        }
+						},
+						cantPageBackward: function(){
+        					return !($scope.option.pagingOptions.currentPage > 1);
+						}
 					};
 					
 					var pageTemplete =  
 						'<div class="anPager">' +
-							'<div class="anPagerCtrl">' +
+							'<div class="anPagerCtrl" ng-show="option.pagingOptions.showPageButton">' +
 								'<div class="input-prepend input-append">' +
-									'<button class="btn" ng-click="pagiation.pageToFirst()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev"><div class="anPagerFirstBar"></div></div></div></button>' +
-					                '<button class="btn" ng-click="pagiation.pageBackward()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev anPagerTriangleOnly"></div></div></button>' +
+									'<button class="btn" ng-click="pagiation.pageToFirst()" ng-disabled="pagiation.cantPageBackward()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev"><div class="anPagerFirstBar"></div></div></div></button>' +
+					                '<button class="btn" ng-click="pagiation.pageBackward()" ng-disabled="pagiation.cantPageBackward()"><div class="icon-anPagerTriangle"><div class="anPagerTrianglePrev anPagerTriangleOnly"></div></div></button>' +
 					                '<input class="span1" id="anPagerNum" type="text" ng-model="option.pagingOptions.currentPage">' +
-					                '<button class="btn" ng-click="pagiation.pageForward()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext anPagerTriangleOnly"></div></div></button>' +
-					                '<button class="btn" ng-click="pagiation.pageToLast()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext"><div class="anPagerLastBar"></div></div></div></button>' +
+					                '<button class="btn" ng-click="pagiation.pageForward()" ng-disabled="pagiation.cantPageForward()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext anPagerTriangleOnly"></div></div></button>' +
+					                '<button class="btn" ng-click="pagiation.pageToLast()" ng-disabled="pagiation.cantPageForward()"><div class="icon-anPagerTriangle"><div class="anPagerTriangleNext"><div class="anPagerLastBar"></div></div></div></button>' +
 					            '</div>' +
 							'</div>' +
-							'<div class="anPagerSize">' +
+							'<div class="anPagerSize" ng-show="option.pagingOptions.showPageSizeSelect">' +
 								'<span class="anLabel">PageSize: </span>' +
 								'<select class="anPagerSizeSelect" ng-model="option.pagingOptions.pageSize">' + 
-								    '<option ng-repeat="size in option.pagingOptions.pageSizes" value="{{size}}">{{size}}</option>' +
+								    '<option ng-repeat="size in option.pagingOptions.pageSizes">{{size}}</option>' +
 								'</select>' +
 							'</div>' +
-							'<div class="anPagerInfo"><span class="anLabel">Total Item:</span> {{thedata.length}}</div>' +
+							'<div class="anPagerInfo" ng-show="option.pagingOptions.showTotalItemDiv"><span class="anLabel">Total Item:</span> {{thedata.length}}</div>' +
 						'</div>';
 					$element.children(".anFooter").append($compile(pageTemplete)($scope)); 
+					
+					//TODO: if we have more esay function to do this
+					$scope.$watch("option.pagingOptions.currentPage", function(newValue, oldValue){
+			    		root.setRowCache();
+					});
+					$scope.$watch("option.pagingOptions.pageSize", function(newValue, oldValue){
+			    		root.setRowCache();
+					});
 				}
 				
-				var setRowCache = function(){
+				root.setRowCache = function(){
 					if($scope.option.pagingOptions){
-                    	var head = $scope.option.pagingOptions.pageSize * ($scope.option.pagingOptions.currentPage -  1);
+						var head = $scope.option.pagingOptions.pageSize * ($scope.option.pagingOptions.currentPage -  1);
                     	var tail = $scope.option.pagingOptions.pageSize * $scope.option.pagingOptions.currentPage;
+                    	var maxpage = $scope.pagiation.maxPages();
+						if($scope.option.pagingOptions.currentPage > maxpage){
+							console.log("no data")
+						}
                     	$scope.rowCache = $scope.thedata.slice(head, tail);
                     	console.log(head, tail);
+                    }else{
+                    	$scope.rowCache = $scope.thedata;
                     }
 				}
 				//watch the data change, 
@@ -123,8 +144,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	                    prevlength = a ? a.length:0;
 	                    $scope.thedata = $scope.$eval($scope.option.data) || [];
 	                    root.config.data = $scope.thedata;
-	                    
-	                    setRowCache();
+	                    root.setRowCache();
 	                }
                 };
                 $scope.$parent.$watch($scope.option.data, dataWatcher);
