@@ -35,6 +35,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.searchHighlight =            this.config.searchHighlight;
 		        $scope.option.searchHighlight =            this.config.caseSensitive;
 				$scope.option.showFooter =                 this.config.showFooter;
+				$scope.option.showSearchInput =            this.config.showSearchInput;
 				$scope.option.pagingOptions =              this.config.pagingOptions;
 				$scope.option._orderByPredicate =          this.config._orderByPredicate;
 				$scope.option._orderByreverse =            this.config._orderByreverse;
@@ -171,7 +172,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						'</ul>' +
 					'</div>' +
 					'<div class="anFooter" ng-show="option.showFooter">'+
-						'<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>' +
+						'<div class="btn-group filter" ng-show="option.showSearchInput"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>' +
 					'</div>' +
 					'<div class="expression">' +
 					'{{ search.$ = option.searchFilter }}'+
@@ -444,7 +445,8 @@ angular.module('anGrid.services', [])
 		        searchHighlight:             false,		//search text hightlight
 		        caseSensitive:               true,      //hightlight case Sensitive
 		        showFooter:                  false,     //show footer or not
-		        pagingOptions:               false,     //show pagination or not
+		        showSearchInput:             true,     //show the search input in the footer or not
+		        pagingOptions:               false,     //show pagination in hte footer or not, and make pagination seetings
 		        _orderByPredicate:           "",        //the orderby field name
 		        _orderByreverse:             false      //the orderby reverse flag
 			}, option);

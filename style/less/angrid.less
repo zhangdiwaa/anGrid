@@ -1,14 +1,3 @@
-/*for all & used in angrid*/
-.ellipsis { white-space: nowrap; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; overflow: hidden; }
-.dijitCheckBox,  .dijitCheckBoxIcon { background-image: url("../img/checkboxRadioButtonStates.png"); background-repeat: no-repeat; width: 15px; height: 16px; margin: 0 2px 0 0; padding: 0; }
-.dijitCheckBox,  .dijitToggleButton .dijitCheckBoxIcon { background-position: -15px; }
-.dijitCheckBoxChecked, .dijitToggleButtonChecked .dijitCheckBoxIcon { background-position: 0; }
-.dijitCheckBoxDisabled { background-position: -75px; }
-.dijitCheckBoxCheckedDisabled { background-position: -60px; }
-.dijitCheckBoxHover { background-position: -45px; }
-.dijitCheckBoxCheckedHover { background-position: -30px; }
-.anLabel { font-weight: bold; }
-
 /*angrid*/
 .anGrid {
     /*structure*/
@@ -110,55 +99,21 @@
     .anPagerLastBar { width: 10px; border-left: 2px solid black; margin-top: -6px; height: 12px; margin-left: 1px; } 
     .anPagerTriangleOnly { margin-left: 2px; }
     
-    /*filter*/
-    .filter { margin:2px 0 0 10px; float:left; line-height:30px; }
+    /*filter style*/
+    .filter { position: relative; width:170px; height:28px; margin:2px 0 0 10px; float:left; line-height:30px;
+        .icon-search { position: absolute; top:6px; left:6px; }
+        input { position: absolute; text-indent: 22px; width: 160px; }
+    }
     .ui-match { background: yellow; }
 }
 
-
-
-/*for sepcial gird*/
-.instance{
-    &.th-list {
-    	.col0 { background-color: #fff; left:0px; right:0px; }
-        .col1 { left:0px; width:8.75%; }
-        .col2 { left:8.75%; width:8.75%; }
-        .col3 { left:17.5%; width:8.75%; }
-        .col4 { left:26.5%; width:5%; }
-        .col5 { left:31.5%; width:5%; }
-        .col6 { left:36.5%; width:20%; }
-        .col7 { left:56.5%; width:8.75%; }
-        .col8 { left:65.25%; width:8.75%; }
-        .col9 { left:74%; width:8.75%; }
-        .col10 { left:82.75%; width:8.75%; }
-        .col11 { left:91.5%; width:8.75%; }
-    }
-    &.th-large {
-        .col1 { top:30px; left:0px; width:100%; }
-        .col2 { display: none; }
-        .col3 { display: none; }
-        .col4 { display: none; }
-        .col5 { display: none; }
-        .col6 { display: none; }
-        .col7 { display: none; }
-        .col8 { display: none; }
-        .col9 { display: none; }
-        .col10 { display: none; }
-        .col11 { display: none; }
-    }
-    &.th {
-        .col1 { display: none; }
-        .col2 { display: none; }
-        .col3 { display: none; }
-        .col4 { display: none; }
-        .col5 { display: none; }
-        .col6 { display: none; }
-        .col7 { display: none; }
-        .col8 { display: none; }
-        .col9 { display: none; }
-        .col10 { display: none; }
-        .col11 { display: none; }
-    }
-}
-
-
+/*for all & also used in angrid*/
+.ellipsis { white-space: nowrap; -ms-text-overflow: ellipsis; -o-text-overflow: ellipsis; text-overflow: ellipsis; overflow: hidden; }
+.dijitCheckBox, .dijitCheckBoxIcon { background-image: url("../img/checkboxRadioButtonStates.png"); background-repeat: no-repeat; width: 15px; height: 16px; margin: 0 2px 0 0; padding: 0; }
+.dijitCheckBox, .dijitToggleButton .dijitCheckBoxIcon { background-position: -15px; }
+.dijitCheckBoxChecked, .dijitToggleButtonChecked .dijitCheckBoxIcon { background-position: 0; }
+.dijitCheckBoxDisabled { background-position: -75px; }
+.dijitCheckBoxCheckedDisabled { background-position: -60px; }
+.dijitCheckBoxHover { background-position: -45px; }
+.dijitCheckBoxCheckedHover { background-position: -30px; }
+.anLabel { font-weight: bold; }
