@@ -328,7 +328,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 	        	var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
 	        	var templete = 
 	        		filter == "" ?
-	        		'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive"></span>' :
+	        		'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"></span>' :
 	        		//ng-bind-html can only accept string argument
 	        	 	'<span ng-bind-html="rowData[colData.field]'+ filter +' | tostring"></span>';
 				templete = 
