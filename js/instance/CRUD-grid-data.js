@@ -26,24 +26,24 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
                 ,{ field: 'image', displayName:'镜像', cssClass:'col10'}
                 ,{ field: 'snap', displayName:'快照', cssClass:'col11'}
 			]
-   		}
+   		};
    		
    		$scope.resetData = function(){
    			$scope.myData = [];
    			console.log($scope.myData);
-   		}
+   		};
    		$scope.queryData = function(){
    			$scope.myData = instancesData.query();
    			console.log(instancesData.query());
-   		}
+   		};
    		$scope.setTime = 100;
    		$scope.setTimeData = function(){
    			setTimeout(function () {
 				$scope.queryData();
 			    //setTimeout is an eval function, so we need $digest or $apply to process all of the watchers of the current scope and its children
 			    $scope.$digest();
-			}, $scope.setTime)
-   		}
+			}, $scope.setTime);
+   		};
    		
    		$scope.deleteSelectData = function(){
 		    angular.forEach($scope.angridOptions.selectedItems, function(selecteditem, key) {
@@ -51,10 +51,10 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 		    		if(selecteditem.id == dataItem.id){
 		    			$scope.myData.splice(key,1);
 		    		}
-		    	})
+		    	});
 		    });
    			$scope.angridOptions.selectedItems = [];
-   		}
+   		};
    		
    		$scope.insertData = function(){
    			var data = {
@@ -70,15 +70,15 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 	      		security_group: "sg1",
 	      		image: "centOS 64", 
 	      		snap: 3
-      		}
+      		};
       		$scope.myData.unshift(data);
-   		}
+   		};
    		
    		$scope.updateData = function(){
-   			console.log(updateData)
+   			console.log(updateData);
    			if($scope.angridOptions.selectedItems.length > 1){
-   				alert('只能修改一行数据/r we can only change one row')
-   			}
+   				alert('只能修改一行数据/r we can only change one row');
+   			};
    			if($scope.angridOptions.selectedItems.length = 1){
    				var selecteditem = $scope.angridOptions.selectedItems[0];
    				
@@ -100,14 +100,14 @@ angular.module('instanceApp', ['instanceApp.services', 'commonFilter', 'anGrid']
 				      		//id: $scope.myData.length
 		    			});
 		    			
-		    			console.log(update)
+		    			console.log(update);
 		    			$scope.myData.splice(key, 1, update);
-		    			console.log($scope.myData)
+		    			console.log($scope.myData);
 		    			return;
 		    		}
 		    	});
    			}
-   		}
+   		};
    		
    		$scope.mySelections = $scope.angridOptions.selectedItems;
    		
