@@ -1,7 +1,7 @@
 //directive
 angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSanitize'], function ($compileProvider) {
 	//directive angrid
-	$compileProvider.directive('angrid', function ($compile, widthServices, setDefaultOption) {
+	$compileProvider.directive('angrid', function ($compile, widthServices) {
 		var angrid = {
 			//A transclude linking function pre-bound to the correct transclusion scope:
 			transclude: true,
@@ -9,81 +9,83 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 			scope:      true,
 			controller: function ($scope, $element, $attrs, $transclude) {
 				var root = this;
-
-				//there are there three local variables
 				//$scope.option  ------ as the children scope of the controller which has angrid
 				$scope.option = $scope.$eval($attrs.angrid);
-
-				//$scope.theData ------ to update the grid data, we need to $scope.theData = $scope.$eval($scope.option.data)
-				$scope.thedata = [];
-
-				//this.config ------- set default parameters of angrid, this is this controller's object, can not be read by parent controller
-				//this.config = setDefaultOption($scope.option);
-				// default config object, config is a global object of angrid
+				//this.config ------- set default parameters of angrid, the child controller could use it by $angridCtrl.config
+				//set default config
 				root.config = angular.extend({
-					angridStyle:              'th-list', //angrid style, such as th-list, th, th-large
-					canSelectRows:            true, //the flag that decide user can select rows or not
-					multiSelect:              true, //the flag that decide user can select multiple rows or not
-					displaySelectionCheckbox: true, //the flag that decide checkbox of each line display or not
-					selectWithCheckboxOnly:   false, //the flag that decide user can only select rows by click checkbox or not
-					multiSelectWithCheckbox:  false, //the flag that decide user can only multi-select rows by click checkbox or not
-					columnDefs:               [], //this is just reminding that option has to have an attr named columnDefs
-					enableSorting:            true, //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
+					/*Necessary configuration*/
+					data:                     "", //the row data object array, if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
+					columnDefs:               "", //the column define object array, if you want to dynamically change the columns, you should use a string, just like data
+
+					/*Optional configuration*/
 					selectedItems:            [], //return the data of select rows
 					searchFilter:             "", //search filter
+					angridStyle:              'th-list', //angrid style, such as th-list, th, th-large
+					canSelectRows:            true,  //this flag that decide user can select rows or not
+					multiSelect:              true,  //this flag that decide user can select multiple rows or not
+					displaySelectionCheckbox: true,  //this flag that decide checkbox of each line display or not
+					selectWithCheckboxOnly:   false, //this flag that decide user can only select rows by click checkbox or not
+					multiSelectWithCheckbox:  false, //this flag that decide user can only multi-select rows by click checkbox or not
+					enableSorting:            true,  //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
 					searchHighlight:          false, //search text hightlight
-					caseSensitive:            true, //hightlight case Sensitive
+					caseSensitive:            true,  //hightlight case Sensitive
 					showFooter:               false, //show footer or not
 
-					_orderByPredicate: "", //the orderby field name
+					/*Private configuration*/
+					_orderByPredicate: "",   //the orderby field name
 					_orderByreverse:   false //the orderby reverse flag
 				}, $scope.option);
 
-//				if (typeof $scope.option.columnDefs === "string") {
-//					root.config.columnDefs = $scope.$eval($scope.option.columnDefs);
-//				}
+				function columnDefsExtends(){
+					root.config.columnDefs = $scope.columnDefs;
+					//set default config.columnDefs
+					angular.forEach(root.config.columnDefs, function (col, i) {
+						col = angular.extend({
+							/*Necessary configuration*/
+							field:          '',          //the field name of row data which you want to show in this column
+							/*Optional configuration*/
+							displayName:    this.field,  //the title of the column, if not setting the title will be the field name
+							cssClass:       '',          //the css class of column, in this css class, you will need to set the width and left skewing
+							width:          '',          //the substitutes of cssClass, defined the width from 0% to 100%, if the cssClass and width are both null, the width of column will be halving.
+							sortable:       true,        //column sortable or not
+							columnFilter:   '',          //costom column filter for a column
+							columnTemplete: false,       //if use it, it will replace the default ancell template, you'd better know the structure of angrid
+							enableCellEdit: false,       //edit on focus
+							_sortIconflag:  false,       //this flag that decide display the sortIcon or not, you should not set
+							_style:         ''
+						}, col);
+						root.config.columnDefs.splice(i, 1, col);
+						widthServices(root.config.columnDefs);
+					});
+				}
 
-				var prevlength = 0;
-				var dataWatcher = function (a) {
-					if (typeof $scope.option.data === "string") {
-						prevlength = a ? a.length : 0;
-						$scope.thedata = $scope.$eval($scope.option.data) || [];
-						root.config.data = $scope.thedata;
-					}
+				//watch the columnDefs change, then we could dynamically change the columns
+				//To study the ng-grid
+				$scope.columnDefs = [];
+				var colslength = 0;
+				var colsWatcher = function (a) {
+					colslength = a ? a.length : 0;
+					$scope.columnDefs = $scope.$eval($scope.option.columnDefs) || [];
+					columnDefsExtends();
 				};
-				$scope.$parent.$watch($scope.option.data, dataWatcher);
-				$scope.$parent.$watch($scope.option.data + '.length', function (a) {
-					if (a != prevlength) {
-						dataWatcher($scope.$eval($scope.option.data));
-					}
-				});
-
-				angular.forEach(root.config.columnDefs, function (col, i) {
-					col = angular.extend({
-						field:          '', //data name
-						displayName:    this.field, //displayname, the title of the columnDefs
-						cssClass:       '', //the css of column, defined the width, left ( postion: absolute )
-						width:          '', //the substitutes of cssClass, defined the width from 0% to 100%
-						sortable:       true, //column sortable or not
-						columnFilter:   '', //costom column filter for a column
-						columnTemplete: false, //if use it, it will replace the default ancell template, you'd better know the structure of angrid
-						enableCellEdit: false,  //edit on focus
-						_sortIconflag:  false, //the flag that decide display the sortIcon or not, you should not set
-						_style:         ''
-					}, col);
-					root.config.columnDefs.splice(i, 1, col);
-				});
-
-				console.log(root.config.columnDefs);
-
+				if(typeof $scope.option.columnDefs === "string"){
+					$scope.$parent.$watch($scope.option.columnDefs, colsWatcher);
+					$scope.$parent.$watch($scope.option.columnDefs + '.length', function (a) {
+						if (a != colslength) {
+							colsWatcher($scope.$eval($scope.option.columnDefs));
+						}
+					});
+				}else{
+					$scope.columnDefs = $scope.option.columnDefs;
+					columnDefsExtends();
+				}
+				//set width
+				widthServices(root.config.columnDefs);
 
 				//$scope.angrid is only use in angrid's scope
 				$scope.angrid = {};
 				$scope.angrid.hasFooterClass = $scope.option.showFooter ? "hasFooter" : "";
-
-				//set width
-				widthServices($scope.option.columnDefs);
-
 
 				//set the the default params to $scope.option
 				//I can not do this by just write "$scope.option = this.config"
@@ -93,7 +95,6 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$scope.option.displaySelectionCheckbox = root.config.displaySelectionCheckbox;
 				$scope.option.selectWithCheckboxOnly = root.config.selectWithCheckboxOnly;
 				$scope.option.multiSelectWithCheckbox = root.config.multiSelectWithCheckbox;
-				$scope.option.columnDefs = root.config.columnDefs;
 				$scope.option.enableSorting = root.config.enableSorting;
 				$scope.option.selectedItems = root.config.selectedItems;
 				$scope.option.searchFilter = root.config.searchFilter;
@@ -109,7 +110,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					dataWatcher($scope.$eval($scope.option.data));
 					angular.forEach($scope.thedata, function (obj, index) {
 						obj.selected = false;
-					})
+					});
 				}
 				$scope.option.selectRowFuc = function (index, state) {
 					dataWatcher($scope.$eval($scope.option.data));
@@ -127,16 +128,19 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					$scope.option.selectedItems.push($scope.thedata[index]);
 				}
 
-
 				//watch the data change,
 				//To study the ng-grid
-				// if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
+				//$scope.option.data is a string
+				//if it is a string we can watch for data changes. otherwise you won't be able to update the grid data
+				//$scope.theData ------ to update the grid data, we need to $scope.theData = $scope.$eval($scope.option.data)
+				$scope.thedata = [];
 				var prevlength = 0;
 				var dataWatcher = function (a) {
 					if (typeof $scope.option.data === "string") {
 						prevlength = a ? a.length : 0;
 						$scope.thedata = $scope.$eval($scope.option.data) || [];
 						root.config.data = $scope.thedata;
+						console.log("dataWatcher", $scope.thedata);
 					}
 				};
 				$scope.$parent.$watch($scope.option.data, dataWatcher);
@@ -145,30 +149,26 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						dataWatcher($scope.$eval($scope.option.data));
 					}
 				});
-
-
-				//console.log("option:", $scope.option );
-				//console.log("option:", $scope.option );
-				//console.log("config:", this.config);
 			},
 			template: //TODO: to complie templete
 						'<div class="anGrid instance {{option.angridStyle}}">'
 							+ '<div class="anHead"><!-- thead -->'
-							+ '<ul>'
-							+ '<anhead sort-field="option._orderByPredicate" sort-reverse="option._orderByreverse" selects="option.selectedItems"></anhead>'
-							+ '</ul>'
+								+ '<ul>'
+									+ '<anhead column-defs="columnDefs" sort-field="option._orderByPredicate" sort-reverse="option._orderByreverse" selects="option.selectedItems"></anhead>'
+								+ '</ul>'
 							+ '</div>'
 							+ '<div class="anBody {{angrid.hasFooterClass}}"><!-- tbody -->'
-							+ '<ul>'
-							+ '<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" search-filter="option.searchFilter" ></anrow>'
-							+ '</ul>'
+								+ '<ul>'
+									+ '<anrow ng-repeat="rowdata in thedata | orderBy:option._orderByPredicate:option._orderByreverse | filter:search" anrow-data="rowdata" selects="option.selectedItems" search-filter="option.searchFilter" ></anrow>'
+								+ '</ul>'
 							+ '</div>'
 							+ '<div class="anFooter" ng-show="option.showFooter">'
-							+ '<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>'
+								+ '<div class="btn-group filter"><input id="inputIcon" type="text" ng-model="option.searchFilter" /><i class="icon-search"></i></div>'
 							+ '</div>'
-							+ '<div class="expression">' + '{{ search.$ = option.searchFilter }}'
+							+ '<div class="expression">'
+								+ '{{ search.$ = option.searchFilter }}'
 							+ '</div>'
-							+ '</div>',
+						+ '</div>',
 			replace:    true
 		};
 		return angrid;
@@ -322,14 +322,14 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 			template:   '<li></li>',
 			replace:    true,
 			scope:      {
+				columnDefs:    "=columnDefs",
 				sortfield:     "=sortField",
 				sortreverse:   "=sortReverse",
 				selectedItems: "=selects"
 			},
 			link:       function ($scope, $element, $attrs, $angridCtrl) {
-				$scope.anhead = angular.extend({
+				$scope.anhead = {
 					selectAll:          false,
-					columnDefs:         $angridCtrl.config.columnDefs,
 					caret:              '',
 					toggleSelectAllFuc: function () {
 						if (!$angridCtrl.config.canSelectRows || !$angridCtrl.config.displaySelectionCheckbox) {
@@ -364,18 +364,22 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						$scope.sortfield = col.field;
 						$scope.sortreverse = !$scope.sortreverse;
 						$scope.anhead.caret = $scope.sortreverse ? 'caretdown' : 'caretup';
-						console.log(col);
 					},
 					anhcellCssFuc:      function (col) {
 						var cssClass = col.sortable == true ? "sortable " : " ";
 						cssClass += col.cssClass;
 						return cssClass;
 					}
-				}, $scope.anhead);
-
+				}
 				//set the realy head row templete
-				var checkbox = $angridCtrl.config.displaySelectionCheckbox == true ? '<div class="anCheckbox" ng-click="anhead.toggleSelectAllFuc()"><span class="dijitCheckBox" ng-class="{\'dijitCheckBoxChecked\': anhead.selectAll}"></span></div>' : '';
-				var row = checkbox + '<ol>' + '<anhcell ng-repeat="col in anhead.columnDefs" col-data="col" an-head="anhead" ></anhcell>' + '</ol>';
+				var checkbox = $angridCtrl.config.displaySelectionCheckbox ==
+					true
+					?
+					'<div class="anCheckbox" ng-click="anhead.toggleSelectAllFuc()"><span class="dijitCheckBox" ng-class="{\'dijitCheckBoxChecked\': anhead.selectAll}"></span></div>' : '';
+				var row = checkbox +
+					'<ol>' +
+						'<anhcell ng-repeat="col in columnDefs" col-data="col" an-head="anhead" ></anhcell>' +
+					'</ol>';
 				$element.append($compile(row)($scope));
 			}
 		};
@@ -402,52 +406,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 });
 
 //services
-angular.module('anGrid.services', []).factory('setDefaultOption', function () {
-	return function (option) {
-
-		// default config object, config is a global object of angrid
-		option = angular.extend({
-			angridStyle:              'th-list', //angrid style, such as th-list, th, th-large
-			canSelectRows:            true, //the flag that decide user can select rows or not
-			multiSelect:              true, //the flag that decide user can select multiple rows or not
-			displaySelectionCheckbox: true, //the flag that decide checkbox of each line display or not
-			selectWithCheckboxOnly:   false, //the flag that decide user can only select rows by click checkbox or not
-			multiSelectWithCheckbox:  false, //the flag that decide user can only multi-select rows by click checkbox or not
-			columnDefs:               [], //this is just reminding that option has to have an attr named columnDefs
-			enableSorting:            true, //This is a main switch that decide user can sort rows by column or not ( however, each column has its own switch )
-			selectedItems:            [], //return the data of select rows
-			searchFilter:             "", //search filter
-			searchHighlight:          false, //search text hightlight
-			caseSensitive:            true, //hightlight case Sensitive
-			showFooter:               false, //show footer or not
-
-			_orderByPredicate: "", //the orderby field name
-			_orderByreverse:   false //the orderby reverse flag
-		}, option);
-
-		if (typeof option.columnDefs === "string") {
-			option.columnDefs = $scope.$eval(option.columnDefs);
-		}
-
-		angular.forEach(option.columnDefs, function (col, i) {
-			col = angular.extend({
-				field:          '', //data name
-				displayName:    this.field, //displayname, the title of the columnDefs
-				cssClass:       '', //the css of column, defined the width, left ( postion: absolute )
-				width:          '', //the substitutes of cssClass, defined the width from 0% to 100%
-				sortable:       true, //column sortable or not
-				columnFilter:   '', //costom column filter for a column
-				columnTemplete: false, //if use it, it will replace the default ancell template, you'd better know the structure of angrid
-				enableCellEdit: false,  //edit on focus
-				_sortIconflag:  false, //the flag that decide display the sortIcon or not, you should not set
-				_style:         ''
-			}, col);
-			option.columnDefs.splice(i, 1, col);
-		});
-
-		return option;
-	};
-}).factory('widthServices', function () {
+angular.module('anGrid.services', []).factory('widthServices', function () {
 	return function (columnDefs) {
 		var left = 0;
 		var oldutil = '';

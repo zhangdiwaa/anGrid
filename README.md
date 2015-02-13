@@ -9,6 +9,7 @@ Dependencies: angular.js.
 ##About##
 
 This is an easy frontend grid plugin for angularjs.
+
 Although there are lots of grid plugin such as ng-grid, jqgrid and flexigrid, I also need a grid plugin made by myself.
 For one reason, in the face of changing needs, we need to be able to flexibly update code.
 For another reason, build a plugin by myself is an interesting process.
