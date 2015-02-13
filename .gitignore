@@ -117,3 +117,5 @@ nbproject
 .idea
 .project
 *.sublime-workspace
+/.idea
+/*.project
