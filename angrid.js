@@ -45,15 +45,16 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 							/*Necessary configuration*/
 							field:          '',          //the field name of row data which you want to show in this column
 							/*Optional configuration*/
-							displayName:    this.field,  //the title of the column, if not setting the title will be the field name
-							cssClass:       '',          //the css class of column, in this css class, you will need to set the width and left skewing
-							width:          '',          //the substitutes of cssClass, defined the width from 0% to 100%, if the cssClass and width are both null, the width of column will be halving.
-							sortable:       true,        //column sortable or not
-							columnFilter:   '',          //costom column filter for a column
-							columnTemplete: false,       //if use it, it will replace the default ancell template, you'd better know the structure of angrid
-							enableCellEdit: false,       //edit on focus
-							_sortIconflag:  false,       //this flag that decide display the sortIcon or not, you should not set
-							_style:         ''
+							displayName:           this.field,  //the title of the column, if not setting the title will be the field name
+							cssClass:              '',          //the css class of column, in this css class, you will need to set the width and left skewing
+							width:                 '',          //the substitutes of cssClass, defined the width from 0% to 100%, if the cssClass and width are both null, the width of column will be halving.
+							sortable:              true,        //column sortable or not
+							columnFilter:          '',          //costom column filter for a column
+							columnTemplete:        false,       //if use it, it will replace the default ancell template, you'd better know the structure of angrid
+							enableCellEditOnFocus: false,       //edit on focus
+							/*Private configuration*/
+							_sortIconflag:         false,       //this flag that decide display the sortIcon or not, you should not set
+							_style:                ''
 						}, col);
 						root.config.columnDefs.splice(i, 1, col);
 						widthServices(root.config.columnDefs);
@@ -140,7 +141,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 						prevlength = a ? a.length : 0;
 						$scope.thedata = $scope.$eval($scope.option.data) || [];
 						root.config.data = $scope.thedata;
-						console.log("dataWatcher", $scope.thedata);
+						//console.log("dataWatcher", $scope.thedata);
 					}
 				};
 				$scope.$parent.$watch($scope.option.data, dataWatcher);
@@ -299,15 +300,22 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				$attrs.$set('class', $scope.colData.cssClass);
 				$attrs.$set('title', $scope.rowData[$scope.colData.field]);
 				//compile with the searchFilter & columnFilter
+				if($scope.colData.enableCellEditOnFocus){
+					$scope.onEdit = false;
+				}
 
 				$scope.caseSensitive = $angridCtrl.config.caseSensitive;
 				var filter = $scope.colData.columnFilter == '' ? '' : ' | ' + $scope.colData.columnFilter;
+				var cellEditFuc = $scope.colData.enableCellEditOnFocus == true ?
+					' ng-click="onEdit = true" ng-hide="onEdit"': "";
+				var cellEditElement = $scope.colData.enableCellEditOnFocus == true ?
+					'<input type="text" ng-model="rowData[colData.field]" ng-blur="onEdit = false" ng-show="onEdit" focus-me="onEdit" style="width:80%" />': "";
 				var templete = filter == "" ?
 					//'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive"></span>'
-					'<span ng-bind-html="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"></span>'
+					'<span ng-bind-html="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"'+ cellEditFuc +'></span>' + cellEditElement
 					:
 					//ng-bind-html can only accept string argument
-					'<span ng-bind-html="rowData[colData.field]' + filter + ' | tostring"></span>';
+					'<span ng-bind-html="rowData[colData.field]' + filter + ' | tostring"'+ cellEditFuc +'></span>' + cellEditElement;
 				templete = $scope.colData.columnTemplete ? $scope.colData.columnTemplete : templete;
 				$element.append($compile(templete)($scope));
 			}
@@ -403,6 +411,20 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 			}
 		};
 	});
+
+	$compileProvider.directive('focusMe', function($timeout) {
+		return {
+			scope: { trigger: '=focusMe' },
+			link: function(scope, element) {
+				scope.$watch('trigger', function(value) {
+					if(value === true) {
+						element[0].focus();
+						//scope.trigger = false;
+					}
+				});
+			}
+		};
+	});
 });
 
 //services
@@ -444,26 +466,27 @@ angular.module('anGrid.services', []).factory('widthServices', function () {
 	};
 });
 
-angular.module('anGrid.filters', []).filter('tostring', function () {
-	return function (input) {
-		//input type: string, number(int, float, NaN), boolean, object(object, array, null), function, undefined
-		switch (typeof(input)) {
-			case "undefined":
-				return "undefined";
-			case "function":
-				//you'd better not use function, just use filter
-				return input();
-			default:
-				if (input == null) {
-					return "null";
-				}
-				return input.toString();
-		}
-	};
-})
-//most of filters are custom filter, you should define them yourself and inject them into angrid
-//in angrid we only support a little easy filter
-//'checkmark', return character of right or wrong
+angular.module('anGrid.filters', [])
+	.filter('tostring', function () {
+		return function (input) {
+			//input type: string, number(int, float, NaN), boolean, object(object, array, null), function, undefined
+			switch (typeof(input)) {
+				case "undefined":
+					return "undefined";
+				case "function":
+					//you'd better not use function, just use filter
+					return input();
+				default:
+					if (input == null) {
+						return "null";
+					}
+					return input.toString();
+			}
+		};
+	})
+	//most of filters are custom filter, you should define them yourself and inject them into angrid
+	//in angrid we only support a little easy filter
+	//'checkmark', return character of right or wrong
 	.filter('checkmark', function () {
 		return function (input) {
 			return input ? '\u2714' : '\u2718';
