@@ -309,7 +309,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 				var cellEditFuc = $scope.colData.enableCellEditOnFocus == true ?
 					' ng-click="onEdit = true" ng-hide="onEdit"': "";
 				var cellEditElement = $scope.colData.enableCellEditOnFocus == true ?
-					'<input type="text" ng-model="rowData[colData.field]" ng-blur="onEdit = false" ng-show="onEdit" focus-me="onEdit" style="width:80%" />': "";
+					'<input type="text" ng-model="rowData[colData.field]" ng-blur="onEdit = false" ng-show="onEdit" focus-me="onEdit" class="cell-edit-input" />': "";
 				var templete = filter == "" ?
 					//'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive"></span>'
 					'<span ng-bind-html="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"'+ cellEditFuc +'></span>' + cellEditElement
