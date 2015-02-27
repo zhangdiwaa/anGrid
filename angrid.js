@@ -48,6 +48,7 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 							displayName:           this.field,  //the title of the column, if not setting the title will be the field name
 							cssClass:              '',          //the css class of column, in this css class, you will need to set the width and left skewing
 							width:                 '',          //the substitutes of cssClass, defined the width from 0% to 100%, if the cssClass and width are both null, the width of column will be halving.
+							cellStyle:             '',          //column cell Style, It is best not to include column width
 							sortable:              true,        //column sortable or not
 							columnFilter:          '',          //costom column filter for a column
 							columnTemplete:        false,       //if use it, it will replace the default ancell template, you'd better know the structure of angrid
@@ -312,16 +313,16 @@ angular.module('anGrid.directives', ['anGrid.services', 'anGrid.filters', 'ngSan
 					'<input type="text" ng-model="rowData[colData.field]" ng-blur="onEdit = false" ng-show="onEdit" focus-me="onEdit" class="cell-edit-input" />': "";
 				var templete = filter == "" ?
 					//'<span ng-bind-html-unsafe="rowData[colData.field] | highlight:searchFilter:caseSensitive"></span>'
-					'<span ng-bind-html="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"'+ cellEditFuc +'></span>' + cellEditElement
+					'<span ng-bind-html="rowData[colData.field] | highlight:searchFilter:caseSensitive | tostring"'+ cellEditFuc +' style="'+ $scope.colData.cellStyle +'"></span>' + cellEditElement
 					:
 					//ng-bind-html can only accept string argument
-					'<span ng-bind-html="rowData[colData.field]' + filter + ' | tostring"'+ cellEditFuc +'></span>' + cellEditElement;
+					'<span ng-bind-html="rowData[colData.field]' + filter + ' | tostring"'+ cellEditFuc +' style="'+ $scope.colData.cellStyle +'"></span>' + cellEditElement;
 				templete = $scope.colData.columnTemplete ? $scope.colData.columnTemplete : templete;
 				$element.append($compile(templete)($scope));
 			}
 		};
 	});
-	//directive anhead, this is part of angrid
+	//directive afnhead, this is part of angrid
 	$compileProvider.directive('anhead', function ($compile) {
 		return {
 			require:    '^angrid',
@@ -467,6 +468,13 @@ angular.module('anGrid.services', []).factory('widthServices', function () {
 });
 
 angular.module('anGrid.filters', [])
+	//most of filters are custom filter, you should define them yourself and inject them into angrid
+	//in angrid we only support a little easy filter
+/**
+ * @name tostring
+ * @description make sure any type of data showing as string
+ * @param text {string} filter object
+ */
 	.filter('tostring', function () {
 		return function (input) {
 			//input type: string, number(int, float, NaN), boolean, object(object, array, null), function, undefined
@@ -484,15 +492,29 @@ angular.module('anGrid.filters', [])
 			}
 		};
 	})
-	//most of filters are custom filter, you should define them yourself and inject them into angrid
-	//in angrid we only support a little easy filter
-	//'checkmark', return character of right or wrong
-	.filter('checkmark', function () {
-		return function (input) {
-			return input ? '\u2714' : '\u2718';
-		};
+/**
+ * @name escapeHtml
+ * @description replace the html which lead to $sanitize:badparse
+ * @param text {string} filter object
+ */
+	.filter('escapeHtml', function () {
+		return function(text){
+			var map = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			};
+			return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+		}
+
 	})
-//'reverse', reverse the string
+/**
+ * @name reverse
+ * @description reverse the string
+ * @param text {string} filter object
+ */
 	.filter('reverse', function () {
 		return function (input, uppercase) {
 			var out = "";
@@ -507,11 +529,13 @@ angular.module('anGrid.filters', [])
 		}
 	})
 /**
- * Wraps the
+ * @name highlight
+ * @description Wraps the search result with highlight css
  * @param text {string} haystack to search through
  * @param search {string} needle to search for
  * @param [caseSensitive] {boolean} optional boolean to use case-sensitive searching
- */.filter('highlight', function () {
+ */
+	.filter('highlight', function () {
 		return function (text, search, caseSensitive) {
 			if (!angular.isString(text)) {
 				return text;
